@@ -1,0 +1,210 @@
+---
+title: "CIMICE Web App"
+author: "Nicolò Rossi"
+date: "7/3/2020"
+output: html_document
+runtime: shiny
+---
+
+This is a simple web interface to easly use CIMICE tool on your datasets. Copy your dataset in the text area, choose the best parameters for 
+your analisys and run the program by pressing the "Load new Dataset" button.
+
+```{r, echo=F}
+knitr::opts_chunk$set(echo = F, fig.align="center")
+```
+
+```{r, error=F, message=F, results = "hide"}
+# Reload package from disk (devel.)
+reload.CIMICE = function(){
+  tryCatch(devtools::uninstall("/home/redsnic/Documenti/RStuff/CIMICE"),
+    finally={devtools::install_local("/home/redsnic/Documenti/RStuff/CIMICE")})
+}
+# CIMICE lib
+reload.CIMICE()
+devtools::reload(pkgload::inst("CIMICE"))
+library(CIMICE)
+```
+
+```{r, error=F, message=F, results = "hide"}
+# Dataframe manipulation
+library(dplyr) 
+# Plot display
+library(ggplot2)
+# Improved string operations
+library(glue)
+# Dataframe manipulation
+library(tidyr)
+# Graph data management
+library(igraph)
+# Remove transitive edges on o graph
+library(nem)
+# Interactive graph visualization
+library(networkD3)
+# Interactive graph visualization
+library(visNetwork)
+# Correlation plot visualization
+library(ggcorrplot)
+# Functional R programming
+library(purrr)
+# Graph Visualization
+library(ggraph)
+# Graph manipulation/visualization
+library(tidygraph)
+```
+
+
+
+## Input
+
+```{r}
+# Default example
+# genes
+dataset <- make.dataset(A,B,C,D) %>%
+# samples
+  update.df("S1", 0, 0, 0, 1) %>%
+  update.df("S2", 1, 0, 0, 0) %>%
+  update.df("S3", 1, 0, 0, 0) %>%
+  update.df("S4", 1, 0, 0, 1) %>%
+  update.df("S5", 1, 1, 0, 1) %>%
+  update.df("S6", 1, 1, 0, 1) %>%
+  update.df("S7", 1, 0, 1, 1) %>%
+  update.df("S8", 1, 1, 0, 1) 
+```
+
+```{r}
+
+rv <- reactiveValues()
+rv$dataset <- dataset
+
+textAreaInput("inputDataset", "Copy your dataset here:", value = 
+"
+s\\g A B C D
+S1 0 0 0 1
+S2 1 0 0 0
+S3 1 0 0 0
+S4 1 0 0 1
+S5 1 1 0 1
+S6 1 1 0 1
+S7 1 0 1 1 
+S8 1 1 0 1
+", resize = "both", rows = 30) %>% shiny::tagAppendAttributes(style = 'width: 100%;')
+
+checkboxInput("limitedSize", "use custom maximum number of genes/samples (default, unlimited)", value = FALSE) %>% shiny::tagAppendAttributes(style = 'width: 100%;')
+numericInput("maxGenes", "Maximum number of genes (3-200)", 20, min=3, max=200) %>% shiny::tagAppendAttributes(style = 'width: 100%;')
+numericInput("maxSamples", "Maximum number of samples (3-200)", 20, min=3, max=200) %>% shiny::tagAppendAttributes(style = 'width: 100%;')
+
+actionButton("loadData", "Load new dataset") %>% shiny::tagAppendAttributes(style = 'width: 100%;')
+
+observeEvent(input$loadData, { rv$dataset <- read.CAPRI.string(input$inputDataset) })
+
+```
+
+## Dataset analysis
+
+```{r}
+
+renderPrint({
+    print(rv$dataset)
+})
+
+renderPlot({
+    gene.mutations.hist(rv$dataset)
+})  
+renderPlot({
+    sample.mutations.hist(rv$dataset, binwidth = 1)
+})  
+```
+
+## Correlation plots
+
+### Gene based
+```{r}
+renderPlot({
+    dataset <- rv$compacted.dataset
+    corrplot.genes(dataset)
+})
+```
+
+### Sample based
+
+```{r}
+renderPlot({
+    dataset <- rv$compacted.dataset
+    corrplot.samples(dataset)
+})
+```
+
+## Output
+
+### Ggraph output
+
+```{r}
+renderPlot({
+    # Resize dataset
+    dataset <- rv$dataset
+    if(input$limitedSize){
+      n.genes <- input$maxGenes
+      n.samples <- input$maxSamples
+      dataset <- select.samples.on.mutations(dataset , n.samples, desc = F) %>% select.genes.on.mutations(n.genes)
+    }
+    rv$compacted.dataset <- dataset
+    # Compact
+    compactedDataset <- compact.dataset.easy(dataset)
+    samples = as.matrix(compactedDataset %>% select(-freq))
+    
+    genes = colnames(samples)
+    freqs = as.matrix(compactedDataset %>% ungroup() %>% select(freq))
+    freqs = freqs/sum(freqs)
+    # prepare node labels listing the mutated genes for each node
+    labels <- prepare.labels(samples, genes)
+    # fix Colonal genotype absence, if needed
+    if (!(0 %in% apply(samples,MARGIN=1, sum))){
+      samples = rbind(samples, sapply(1:ncol(samples), function(x) 0) )
+      freqs = c(freqs,0)
+      labels = c(labels,"Clonal")
+    }
+    # compute edges based on subset relation
+    edges <- build.topology.subset(samples)
+    # prepare the actual graph 
+    g = graph_from_edgelist(t(simplify2array(edges)))
+    # remove transitive edges using transitive.reduction from the "nem" package
+    g = graph_from_adjacency_matrix(transitive.reduction(as.matrix(as_adj(g))))
+    # add labels to node
+    V(g)$label <- labels 
+    # Weights:
+    A <- as.matrix(as_adj(g))
+    no.of.children <- get.no.of.children(A,g)
+    upWeights <- computeUPW(g, freqs, no.of.children, A)
+    normUpWeights <- normalizeUPW(g, freqs, no.of.children, A, upWeights)
+    computeDWNW <- computeDWNW(g, freqs, no.of.children, A, normUpWeights)
+    normDownWeights <- normalizeDWNW(g, freqs, no.of.children, A, downWeights)
+    rv$g <- g
+    rv$weights <- normDownWeights
+    rv$labels <- labels
+    draw.ggraph(rv$g, rv$weights, rv$labels)
+})
+```
+
+### NetworkD3 output
+
+```{r}
+renderForceNetwork({
+    draw.networkD3(rv$g, rv$weights, rv$labels)
+})
+```
+
+### VisNetwork output
+
+```{r}
+renderVisNetwork({
+    draw.visNetwork(rv$g, rv$weights, rv$labels)
+})
+```
+
+
+```{r}
+#run all
+```
+
+
+

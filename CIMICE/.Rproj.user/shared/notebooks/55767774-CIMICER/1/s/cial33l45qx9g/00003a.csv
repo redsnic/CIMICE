@@ -1,0 +1,8 @@
+"0","temp.df <- as.data.frame(t(dataset[,1:nrow(t(dataset))])) "
+"0",""
+"0","temp.df$sums <- rowSums(temp.df[,1:ncol(temp.df)], na.rm = TRUE)"
+"0","nGenes <- nrow(temp.df)"
+"0",""
+"0","ggplot(temp.df, aes(x=sums)) +"
+"0","    geom_histogram(color=""black"", fill=""white"", binwidth = 1) +"
+"0","    labs(title = glue(""Numero di mutazioni per gene ({nGenes} geni)""), x = ""Numero di mutazioni"", y = ""Conteggio"")"
