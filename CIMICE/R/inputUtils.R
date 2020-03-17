@@ -1,8 +1,4 @@
 
-library(dplyr)
-library(glue)
-library(ggcorrplot)
-
 read.CAPRI.string <- function(txt){
     df <- read.csv(text=txt, sep = " ", row.names=NULL)
     colnames(df)[1] = "Samples"

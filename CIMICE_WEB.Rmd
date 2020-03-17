@@ -13,17 +13,6 @@ your analisys and run the program by pressing the "Load new Dataset" button.
 knitr::opts_chunk$set(echo = F, fig.align="center")
 ```
 
-```{r, error=F, message=F, results = "hide"}
-# Reload package from disk (devel.)
-reload.CIMICE = function(){
-  tryCatch(devtools::uninstall("/home/redsnic/Documenti/RStuff/CIMICE"),
-    finally={devtools::install_local("/home/redsnic/Documenti/RStuff/CIMICE")})
-}
-# CIMICE lib
-reload.CIMICE()
-devtools::reload(pkgload::inst("CIMICE"))
-library(CIMICE)
-```
 
 ```{r, error=F, message=F, results = "hide"}
 # Dataframe manipulation
@@ -50,9 +39,16 @@ library(purrr)
 library(ggraph)
 # Graph manipulation/visualization
 library(tidygraph)
+
+library("ComplexHeatmap")
 ```
 
-
+```{r, error=F, message=F, results = "hide", warning=F, message=F}
+if(!require(CIMICE)){
+  devtools::install_github("redsnic/CIMICE-R", subdir = "CIMICE")
+  library(CIMICE)
+}
+```
 
 ## Input
 
@@ -102,6 +98,10 @@ observeEvent(input$loadData, { rv$dataset <- read.CAPRI.string(input$inputDatase
 ## Dataset analysis
 
 ```{r}
+
+renderPlot({
+  oncoPrint(as.matrix(rv$dataset))  
+})
 
 renderPrint({
     print(rv$dataset)
