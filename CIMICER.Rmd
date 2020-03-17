@@ -31,11 +31,15 @@ This implementation of CIMICE is built as a single library on its own:
 ```{r, error=F, message=F, results = "hide"}
 # Reload package from disk (devel.)
 reload.CIMICE = function(){
-  tryCatch(devtools::uninstall("/home/redsnic/Documenti/RStuff/CIMICE"),
-    finally={devtools::install_local("/home/redsnic/Documenti/RStuff/CIMICE")})
+  tryCatch(devtools::uninstall("CIMICE"),
+    finally={devtools::install_github("redsnic/CIMICE-R", subdir="CIMICE")})
 }
 # CIMICE lib
-reload.CIMICE()
+#reload.CIMICE()
+if(!require(CIMICE)){
+  devtools::install_local("~/git/CIMICE-R/CIMICE")
+  library(CIMICE)
+}
 devtools::reload(pkgload::inst("CIMICE"))
 library(CIMICE)
 ```
@@ -67,6 +71,7 @@ library(purrr)
 library(ggraph)
 # Graph manipulation/visualization
 library(tidygraph)
+
 ```
 
 # Input management
@@ -123,6 +128,10 @@ with the following outcome:
 
 ```{r, echo=F}
 dataset
+library("ComplexHeatmap")
+as.matrix(dataset)
+oncoPrint(as.matrix(dataset))  
+
 ```
 
 # Preliminary check of mutations distributions

@@ -1,0 +1,12 @@
+name: CIMICE_WEB
+title: CIMICE_WEB
+username:
+account: redsnic
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1929995
+bundleId: 2889453
+url: https://redsnic.shinyapps.io/CIMICE_WEB/
+when: 1584432814.8673
+asMultiple: FALSE
+asStatic: FALSE
