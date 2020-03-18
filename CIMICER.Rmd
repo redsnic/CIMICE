@@ -29,11 +29,6 @@ The process can be divided in four main sections:
 This implementation of CIMICE is built as a single library on its own:
 
 ```{r, error=F, message=F, results = "hide"}
-# Reload package from disk (devel.)
-reload.CIMICE = function(){
-  tryCatch(devtools::uninstall("CIMICE"),
-    finally={devtools::install_github("redsnic/CIMICE-R", subdir="CIMICE")})
-}
 # CIMICE lib
 #reload.CIMICE()
 if(!require(CIMICE)){
@@ -71,7 +66,8 @@ library(purrr)
 library(ggraph)
 # Graph manipulation/visualization
 library(tidygraph)
-
+# purrr
+library(purrr)
 ```
 
 # Input management
@@ -130,8 +126,6 @@ with the following outcome:
 dataset
 library("ComplexHeatmap")
 as.matrix(dataset)
-oncoPrint(as.matrix(dataset))  
-
 ```
 
 # Preliminary check of mutations distributions
