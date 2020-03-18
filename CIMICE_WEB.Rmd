@@ -39,6 +39,8 @@ library(purrr)
 library(ggraph)
 # Graph manipulation/visualization
 library(tidygraph)
+# purrr
+library(purrr)
 
 library("ComplexHeatmap")
 ```
@@ -100,11 +102,11 @@ observeEvent(input$loadData, { rv$dataset <- read.CAPRI.string(input$inputDatase
 ```{r}
 
 renderPlot({
-  oncoPrint(as.matrix(rv$dataset))  
-})
-
-renderPrint({
-    print(rv$dataset)
+    m <- matrix(sapply( as.matrix(rv$dataset), FUN = function (x) if(x==0) " " else "MUT"), 
+                nrow = nrow(rv$dataset))
+  colnames(m)<-colnames(rv$dataset)
+  rownames(m)<-rownames(rv$dataset)
+  oncoPrint(m)
 })
 
 renderPlot({
