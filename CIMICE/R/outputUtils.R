@@ -51,6 +51,14 @@ draw.visNetwork <- function(g, W, labels){
         title = paste0("<font color=\"black\"><p>Node:<br>", gr$nodes$label,"</p></font>")
     )
 
+    diff = map2(gr$links$source, gr$links$target,
+                function(x, y){
+                    a <- unlist(strsplit(gr$nodes$label[x+1], ", "))
+                    b <- unlist(strsplit(gr$nodes$label[y+1], ", "))
+                    d <- setdiff(b,a)
+                    d
+                })
+
     edges <- data.frame(
         from = gr$links$source+1,
         to = gr$links$target+1,
@@ -58,7 +66,10 @@ draw.visNetwork <- function(g, W, labels){
         shadow = T,
         label = signif(gr$links$value, digits = 4),
         # Sarebbero da indicare i geni che variano da A a B se A->B
-        title = paste0("<font color=\"black\"><p>Edge:<br> from:", gr$links$source+1 ,"<br>to : ", gr$links$target+1,"</p></font>")
+        title = paste0("<font color=\"black\"><p>Edge:<br> from:",
+                       gr$nodes$label[gr$links$source+1] ,"<br>to : ",
+                       gr$nodes$label[gr$links$target+1] ,"<br>New mutations:<br>",
+                       diff, "</p></font>")
     )
 
     grp <- toVisNetworkData(g, idToLabel = TRUE)
