@@ -1,0 +1,2 @@
+read.CAPRI.string       Read a "CAPRI" formatted file, from a text
+                        string
