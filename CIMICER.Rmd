@@ -30,9 +30,8 @@ This implementation of CIMICE is built as a single library on its own:
 
 ```{r, error=F, message=F, results = "hide"}
 # CIMICE lib
-#reload.CIMICE()
 if(!require(CIMICE)){
-  devtools::install_local("~/git/CIMICE-R/CIMICE")
+  devtools::install_github("redsnic/CIMICE-R", subdir = "CIMICE")
   library(CIMICE)
 }
 devtools::reload(pkgload::inst("CIMICE"))
@@ -66,8 +65,6 @@ library(purrr)
 library(ggraph)
 # Graph manipulation/visualization
 library(tidygraph)
-# purrr
-library(purrr)
 ```
 
 # Input management
@@ -214,7 +211,7 @@ a DAG. These eraly steps are required to prepare the information necessary for t
 Convert dataset to matricial form:
 
 ```{r}
-samples = as.matrix(compactedDataset %>% select(-freq))
+samples <- as.matrix(compactedDataset %>% select(-freq))
 ```
 ```{r,echo=F}
 samples
