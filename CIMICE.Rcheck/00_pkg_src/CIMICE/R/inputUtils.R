@@ -1,4 +1,23 @@
-
+#' Read a "CAPRI" formatted file, from a text string
+#'
+#' @param txt string in valid "CAPRI" format
+#'
+#' @return the described mutational matrix as a dataframe
+#'
+#' @examples
+#' read.CAPRI.string("
+#' s\g A B C D
+#' S1 0 0 0 1
+#' S2 1 0 0 0
+#' S3 1 0 0 0
+#' S4 1 0 0 1
+#' S5 1 1 0 1
+#' S6 1 1 0 1
+#' S7 1 0 1 1
+#' S8 1 1 0 1
+#' ")
+#'
+#' @export
 read.CAPRI.string <- function(txt){
     df <- read.csv(text=txt, sep = " ", row.names=NULL)
     colnames(df)[1] = "Samples"
@@ -12,7 +31,9 @@ read.CAPRI.string <- function(txt){
     df
 }
 
-# Lettura dell'input in formato "CAPRI"
+# read a "CAPRI" formatted file
+# filename <- path to file
+# output: the described mutational matrix as a dataframe
 read.CAPRI <- function(filename){
     df <- read.csv(filename, sep = " ", row.names=NULL)
     colnames(df)[1] = "Samples"
@@ -25,18 +46,25 @@ read.CAPRI <- function(filename){
     df <- df %>% select(-Samples)
     df
 }
-# CAPRI è il formato di default
+# "CAPRI" is considered the default file format
 read <- read.CAPRI
 
-# crea un dataset linea per linea
-# richiede in input i nomi dei geni
+# line by line dataset creation
+# ... <- gene names, do not use "
+# example: make.dataset(APC,P53,KRAS)
+# output: a mutational matrix without samples as dataframe
 make.dataset <- function(...){
     df <- data.frame(matrix(ncol = length(enexprs(...)), nrow = 0))
     colnames(df) <- enexprs(...)
     df
 }
 
-# add a line to the dataframe
+# add a sample (a row) to an existing dataset
+# this procedure is meant to be used with the "%>%" operator
+# d <- existing dataframe
+# sampleName <- the row (sample) name
+# ... <- sample's genotype (0/1 numbers)
+# output: the modified dataframe
 update.df <- function(d, sampleName, ...){
     rnames <- rownames(d)
     cnames <- colnames(d)
@@ -46,29 +74,33 @@ update.df <- function(d, sampleName, ...){
     df
 }
 
-# istogramma delle frequenze di mutazione dei singoli geni
+# creates the histogram of the genes' mutational frequencies
+# df <- input dataframe
+# binwidth <- binwidthd parameter for the histogram (as in ggplot)
 gene.mutations.hist <- function(df, binwidth = 1){
-    # trasposizione del dataframe
+    # transpose dataframe
     temp.df <- as.data.frame(t(df[,1:nrow(t(df))]))
-    # calcolo del numero di mutazioni per i singoli geni nei campioni
+    # compute number of alteration per gene
     temp.df$sums <- rowSums(temp.df[,1:ncol(temp.df)], na.rm = TRUE)
-    # numero di geni considerati
+    # count number of genes
     nGenes <- nrow(temp.df)
-    # l'istogramma
+    # create the histogram
     ggplot(temp.df, aes(x=sums)) +
         geom_histogram(color="black", fill="white", binwidth = binwidth) +
         labs(title = glue("Number of mutations per gene ({nGenes} genes)"),
              x = "Number of mutations", y = "Count")
 }
 
-# istogramma del numero di mutazioni per singolo campione
+# creates the histogram of the samples' mutational frequencies
+# df <- input dataframe
+# binwidth <- binwidthd parameter for the histogram (as in ggplot)
 sample.mutations.hist <- function(df, binwidth = 1){
     temp.df <- df
-    # conteggio delle mutazioni
+    # compute number of alteration per sample
     temp.df$sums <- rowSums(temp.df[,1:ncol(df)], na.rm = TRUE)
-    # numero di campioni considerati
+    # count number of samples
     nSample <- nrow(temp.df)
-    # l'istogramma
+    # create the histogram
     ggplot(temp.df, aes(x=sums)) +
         geom_histogram(color="black", fill="white", binwidth = binwidth) +
         labs(title = glue("Number of mutations per sample ({nSample} samples)"),
@@ -76,7 +108,11 @@ sample.mutations.hist <- function(df, binwidth = 1){
              y = "Counts")
 }
 
-# selezione sui geni (n geni più o meno mutati)
+# Dataset filtering on genes, based on their mutation count
+# df <- input dataset to be reduced
+# n  <- number of genes to be kept
+# desc <- T: select the n least mutated genes, F: select the n most mutated genes
+# output: the modified dataset
 select.genes.on.mutations <- function(df, n, desc = T){
     # traspone il dataset per operare sui geni
     temp.df <- as.data.frame(t(df))
