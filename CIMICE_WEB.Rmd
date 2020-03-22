@@ -94,7 +94,6 @@ numericInput("maxSamples", "Maximum number of samples (3-200)", 20, min=3, max=2
 actionButton("loadData", "Load new dataset") %>% shiny::tagAppendAttributes(style = 'width: 100%;')
 
 observeEvent(input$loadData, { rv$dataset <- read.CAPRI.string(input$inputDataset) })
-
 ```
 
 ## Dataset analysis
