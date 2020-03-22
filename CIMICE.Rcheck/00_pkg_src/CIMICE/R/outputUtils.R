@@ -1,19 +1,9 @@
 
-#' Ggplot graph output
-#'
-#' Draws the output graph using ggplot
-#'
-#' @param g graph to be drawn
-#' @param W weights on edges
-#' @param labels node labels
-#' @param digits precision for edges' weights
-#'
-#' @return ggraph object representing g as described
-#'
-#' @examples
-#' draw.ggraph(g,W,labels,digit = 3)
-#'
-#' @export
+# Draws the output graph using ggplot
+# g <- graph to be drawn
+# W <- weights on edges
+# labels <- node labels
+# digits <- precision for edges' weights
 draw.ggraph <- function(g, W, labels, digits = 4){
     V(g)$label <- labels
 
@@ -31,20 +21,10 @@ draw.ggraph <- function(g, W, labels, digits = 4){
         )
 }
 
-#' NetworkD3 graph output
-#'
-#' Draws the output graph using networkD3
-#'
-#' @param g graph to be drawn
-#' @param W weights on edges
-#' @param labels node labels
-#'
-#' @return networkD3 object representing g as described
-#'
-#' @examples
-#' draw.networkD3(g,W,labels)
-#'
-#' @export
+# Draws the output graph using networkD3
+# g <- graph to be drawn
+# W <- weights on edges
+# labels <- node labels
 draw.networkD3 <- function(g, W, labels){
 
     V(g)$label <- labels
@@ -60,21 +40,10 @@ draw.networkD3 <- function(g, W, labels){
     p
 }
 
-
-#' VisNetwork graph output (default)
-#'
-#' Draws the output graph using VisNetwork
-#'
-#' @param g graph to be drawn
-#' @param W weights on edges
-#' @param labels node labels
-#'
-#' @return visNetwork object representing g as described
-#'
-#' @examples
-#' draw.visNetwork(g,W,labels)
-#'
-#' @export
+# Draws the output graph using visNetwork
+# g <- graph to be drawn
+# W <- weights on edges
+# labels <- node labels
 draw.visNetwork <- function(g, W, labels){
 
     V(g)$label <- labels
