@@ -1,9 +1,0 @@
-
-# Lettura dell'input in formato "CAPRI"
-read.CAPRI <- function(filename){
-    df <- read.csv(filename, sep = " ", row.names=NULL)
-    colnames(df)[1] = "Samples"
-    df
-}
-# CAPRI è il formato di default
-read <- read.CAPRI
