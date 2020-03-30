@@ -23,14 +23,7 @@ computeDWNW.aux(g, edge, freqs, no.of.children, A, normUpWeights)
 a vector containing the Up weights for each edge
 }
 \description{
-Computes the Down weights formula:
-}
-\details{
-W_{down}(<a,b>) = NormalizedW_{up}(<a,b>)(P(b) + \Sigma{for: x in L_b}{of: W_{down}(<b,x>)}
-
-using a Dinamic Programming approach (recursion), see vignettes for further explaination.
-}
-\examples{
-computeUPW.aux(g, edge, freqs, no.of.children, A)
-
+Computes the Down weights formula using
+a Dinamic Programming approach (recursion),
+see vignettes for further explaination.
 }

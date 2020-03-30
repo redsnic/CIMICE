@@ -16,13 +16,28 @@ the computed edge list
 }
 \description{
 Prepare node labels so that each node is labelled with a
-comma separated list of the alterated genes representing its associated genotype.
+comma separated list of the alterated genes
+representing its associated genotype.
 }
 \details{
-Note that after this procedure the user is expected also to run fix.clonal.genotype
-to also add the clonal genortype to the mutational matrix if it is not present.
+Note that after this procedure the user is
+expected also to run fix.clonal.genotype
+to also add the clonal genortype to the
+mutational matrix if it is not present.
 }
 \examples{
-labels <- prepare.labels(samples, genes)
+require(dplyr)
+# compact
+compactedDataset <- compact.dataset.easy(example.dataset())
+# remove frequencies column from the compacted dataset
+samples <- as.matrix(compactedDataset \%>\% select(-freq))
+# save genes' names
+genes = colnames(samples)
+# keep the information on frequencies for further analysis
+freqs = as.matrix(compactedDataset \%>\% ungroup() \%>\% select(freq))
+freqs = freqs/sum(freqs)
+freqs = c(freqs,0)
+# prepare node labels listing the mutated genes for each node
+prepare.labels(samples, genes)
 
 }
