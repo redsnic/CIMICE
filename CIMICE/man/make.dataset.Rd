@@ -7,7 +7,8 @@
 make.dataset(...)
 }
 \arguments{
-\item{...}{gene names (do not use '"', the input is automatically converted to strings)}
+\item{...}{gene names (do not use '"', the input
+is automatically converted to strings)}
 }
 \value{
 a mutational matrix without samples structured as dataframe

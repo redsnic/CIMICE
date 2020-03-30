@@ -4,14 +4,15 @@
 \alias{select.genes.on.mutations}
 \title{Filter dataset by genes' mutation count}
 \usage{
-select.genes.on.mutations(df, n, desc = T)
+\method{select}{genes.on.mutations}(df, n, desc = TRUE)
 }
 \arguments{
 \item{df}{input dataset (mutational matrix) to be reduced}
 
 \item{n}{number of genes to be kept}
 
-\item{desc}{T: select the n least mutated genes, F: select the n most mutated genes}
+\item{desc}{TRUE: select the n least mutated genes,
+FALSE: select the n most mutated genes}
 }
 \value{
 the modified dataset (mutational matrix)
@@ -20,9 +21,10 @@ the modified dataset (mutational matrix)
 Dataset filtering on genes, based on their mutation count
 }
 \examples{
+
 # keep information on the 100 most mutated genes
-select.genes.on.mutations(df, 100)
+select.genes.on.mutations(example.dataset(), 5)
 # keep information on the 100 least mutated genes
-select.genes.on.mutations(df, 100, desc = F)
+select.genes.on.mutations(example.dataset(), 5, desc = FALSE)
 
 }
