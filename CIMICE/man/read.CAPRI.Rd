@@ -17,6 +17,6 @@ Read a "CAPRI" formatted file from the file system
 }
 \examples{
 #          "pathToDataset/myDataset.CAPRI"
-read.CAPRI("/home/redsnic/example.CAPRI")
+read.CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
 
 }
