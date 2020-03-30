@@ -18,6 +18,14 @@ a vector containing the number of children for each node in g
 Compute number of children for each node given an adj matrix
 }
 \examples{
+require(dplyr)
+require(igraph)
+preproc <- example.dataset() \%>\% dataset.preprocessing
+samples <- preproc[["samples"]]
+freqs   <- preproc[["freqs"]]
+labels  <- preproc[["labels"]]
+genes   <- preproc[["genes"]]
+g <- graph.non.transitive.subset.topology(samples, labels)
 A <- as.matrix(as_adj(g))
 get.no.of.children(A, g)
 
