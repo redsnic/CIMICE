@@ -11,10 +11,13 @@ gene.mutations.hist(df, binwidth = 1)
 
 \item{binwidth}{binwidth parameter for the histogram (as in ggplot)}
 }
+\value{
+the newly created histogram
+}
 \description{
 Create the histogram of the genes' mutational frequencies
 }
 \examples{
-gene.mutations.hist(df, binwidth = 10)
+gene.mutations.hist(example.dataset(), binwidth = 10)
 
 }
