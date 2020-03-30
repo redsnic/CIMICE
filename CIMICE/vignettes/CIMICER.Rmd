@@ -90,7 +90,7 @@ and this an example on how to load a dataset from the file system:
 
 ```{r}
 # Read input dataset in CAPRI/CAPRESE format
-dataset.big <- read.CAPRI("/home/redsnic/example.CAPRI")
+dataset.big <- read.CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
 ```
 ```{r, echo=F}
 head(dataset.big)
