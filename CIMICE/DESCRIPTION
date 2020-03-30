@@ -4,9 +4,12 @@ Title: CIMICE-R: (Markov) Chain Method to Inferr Cancer Evolution
 Version: 0.1.0
 Author: Nicolò Rossi <olocin.issor@gmail.com>
 Maintainer: Nicolò Rossi <olocin.issor@gmail.com>
-Description: R implementation of the CIMICE tool 
-License: No
+Description: R implementation of the CIMICE tool. See `https://github.com/redsnic/tumorEvolutionWithMarkovChains/tree/master/GenotypeEvolutionPaths` for the Java version.
+License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
-Imports: dplyr, ggplot2, glue, tidyr, igraph, nem, networkD3, visNetwork, ggcorrplot, purrr, ggraph, tidygraph
+Imports: dplyr, ggplot2, glue, tidyr, igraph, networkD3, visNetwork, ggcorrplot, purrr, ggraph, plyr, stats, utils, relations
 RoxygenNote: 7.1.0
+VignetteBuilder: knitr
+Suggests: knitr, rmarkdown
+biocViews: BiomedicalInformatics, DataImport, GraphAndNetwork, ImmunoOncology, Network, NetworkInference, SingleCell, Software, SomaticMutation, Preprocessing
