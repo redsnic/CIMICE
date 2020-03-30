@@ -4,14 +4,15 @@
 \alias{select.samples.on.mutations}
 \title{Filter dataset by samples' mutation count}
 \usage{
-select.samples.on.mutations(df, n, desc = T)
+\method{select}{samples.on.mutations}(df, n, desc = TRUE)
 }
 \arguments{
 \item{df}{input dataset (mutational matrix) to be reduced}
 
 \item{n}{number of samples to be kept}
 
-\item{desc}{T: select the n least mutated samples, F: select the n most mutated samples}
+\item{desc}{T: select the n least mutated samples,
+F: select the n most mutated samples}
 }
 \value{
 the modified dataset (mutational matrix)
@@ -20,12 +21,13 @@ the modified dataset (mutational matrix)
 Dataset filtering on samples, based on their mutation count
 }
 \examples{
-# keep information on the 100 most mutated samples
-select.samples.on.mutations(df, 100)
-# keep information on the 100 least mutated samples
-select.samples.on.mutations(df, 100, desc = F)
+require(dplyr)
+# keep information on the 5 most mutated samples
+select.samples.on.mutations(example.dataset(), 5)
+# keep information on the 5 least mutated samples
+select.samples.on.mutations(example.dataset(), 5, desc = FALSE)
 # combine selections
-select.samples.on.mutations(df , 100, desc = F) \%>\%
-    select.genes.on.mutations(100)
+select.samples.on.mutations(example.dataset() , 5, desc = FALSE) \%>\%
+    select.genes.on.mutations(5)
 
 }

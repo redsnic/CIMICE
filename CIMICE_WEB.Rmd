@@ -59,14 +59,14 @@ if(!require(CIMICE)){
 # genes
 dataset <- make.dataset(A,B,C,D) %>%
 # samples
-  update.df("S1", 0, 0, 0, 1) %>%
-  update.df("S2", 1, 0, 0, 0) %>%
-  update.df("S3", 1, 0, 0, 0) %>%
-  update.df("S4", 1, 0, 0, 1) %>%
-  update.df("S5", 1, 1, 0, 1) %>%
-  update.df("S6", 1, 1, 0, 1) %>%
-  update.df("S7", 1, 0, 1, 1) %>%
-  update.df("S8", 1, 1, 0, 1) 
+  update_df("S1", 0, 0, 0, 1) %>%
+  update_df("S2", 1, 0, 0, 0) %>%
+  update_df("S3", 1, 0, 0, 0) %>%
+  update_df("S4", 1, 0, 0, 1) %>%
+  update_df("S5", 1, 1, 0, 1) %>%
+  update_df("S6", 1, 1, 0, 1) %>%
+  update_df("S7", 1, 0, 1, 1) %>%
+  update_df("S8", 1, 1, 0, 1) 
 ```
 
 ```{r}

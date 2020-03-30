@@ -13,9 +13,10 @@ corrplot.genes(df)
 the computed correlation plot
 }
 \description{
-Prepare correlation plot based on a dataframe computed from genes' perspective
+Prepare correlation plot based on a
+dataframe computed from genes' perspective
 }
 \examples{
-corrplot.genes(df)
+corrplot.genes(example.dataset())
 
 }
