@@ -1,6 +1,6 @@
 # CIMICE-R
 
-installation:
+### Installation:
 
 ```{R}
 # install package
@@ -12,3 +12,7 @@ quick.run(example.dataset())
 # show guide
 browseVignettes("CIMICE")
 ```
+
+### Web Application:
+
+A (minimal) `shiny` web application to use CIMICE is available [here](https://redsnic.shinyapps.io/CIMICE_WEB/).
