@@ -13,10 +13,11 @@ compact.dataset.easy(dataset)
 the compacted dataset (mutational matrix)
 }
 \description{
-Use plyr library to count duplicate rows and compact the dataset (mutational)
-The column 'freq' will contain the counts for each row.
+Use plyr library to count duplicate rows
+and compact the dataset (mutational). The column
+'freq' will contain the counts for each row.
 }
 \examples{
-compact.dataset.easy(dataset)
+compact.dataset.easy(example.dataset())
 
 }

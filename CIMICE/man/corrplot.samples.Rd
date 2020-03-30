@@ -13,9 +13,10 @@ corrplot.samples(df)
 the computed correlation plot
 }
 \description{
-Prepare correlation plot based on a dataframe computed from samples' perspective
+Prepare correlation plot based on a dataframe
+computed from samples' perspective
 }
 \examples{
-corrplot.samples(df)
+corrplot.samples(example.dataset())
 
 }

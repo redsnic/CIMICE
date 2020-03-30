@@ -16,6 +16,6 @@ the computed correlation plot
 Prepare correlation plot based on a dataframe
 }
 \examples{
-corrplot.from.df(df)
+corrplot.from.df(example.dataset())
 
 }
