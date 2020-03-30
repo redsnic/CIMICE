@@ -41,7 +41,7 @@ library(ggraph)
 library(tidygraph)
 # purrr
 library(purrr)
-
+# oncoprint
 library("ComplexHeatmap")
 ```
 
@@ -151,36 +151,17 @@ renderPlot({
     rv$compacted.dataset <- dataset
     # Compact
     compactedDataset <- compact.dataset.easy(dataset)
-    samples = as.matrix(compactedDataset %>% select(-freq))
     
-    genes = colnames(samples)
-    freqs = as.matrix(compactedDataset %>% ungroup() %>% select(freq))
-    freqs = freqs/sum(freqs)
-    # prepare node labels listing the mutated genes for each node
-    labels <- prepare.labels(samples, genes)
-    # fix Colonal genotype absence, if needed
-    if (!(0 %in% apply(samples,MARGIN=1, sum))){
-      samples = rbind(samples, sapply(1:ncol(samples), function(x) 0) )
-      freqs = c(freqs,0)
-      labels = c(labels,"Clonal")
-    }
-    # compute edges based on subset relation
-    edges <- build.topology.subset(samples)
-    # prepare the actual graph 
-    g = graph_from_edgelist(t(simplify2array(edges)))
-    # remove transitive edges using transitive.reduction from the "nem" package
-    g = graph_from_adjacency_matrix(transitive.reduction(as.matrix(as_adj(g))))
-    # add labels to node
-    V(g)$label <- labels 
-    # Weights:
-    A <- as.matrix(as_adj(g))
-    no.of.children <- get.no.of.children(A,g)
-    upWeights <- computeUPW(g, freqs, no.of.children, A)
-    normUpWeights <- normalizeUPW(g, freqs, no.of.children, A, upWeights)
-    computeDWNW <- computeDWNW(g, freqs, no.of.children, A, normUpWeights)
-    normDownWeights <- normalizeDWNW(g, freqs, no.of.children, A, downWeights)
+    preproc <- dataset.preprocessing(example.dataset())
+    samples <- preproc[["samples"]]
+    freqs   <- preproc[["freqs"]]
+    labels  <- preproc[["labels"]]
+    genes   <- preproc[["genes"]]
+    
+    g <- graph.non.transitive.subset.topology(samples,labels)
+    W <- compute.weights.default(g, freqs)
     rv$g <- g
-    rv$weights <- normDownWeights
+    rv$weights <- W
     rv$labels <- labels
     draw.ggraph(rv$g, rv$weights, rv$labels)
 })
