@@ -19,3 +19,24 @@ a named list containing the fixed "samples", "freqs" and "labels"
 \description{
 Fix the absence of the clonal genotype in the data (if needed)
 }
+\examples{
+require(dplyr)
+# compact
+compactedDataset <- compact.dataset.easy(example.dataset())
+# remove frequencies column from the compacted dataset
+samples <- as.matrix(compactedDataset \%>\% select(-freq))
+# save genes' names
+genes = colnames(samples)
+# keep the information on frequencies for further analysis
+freqs = as.matrix(compactedDataset \%>\% ungroup() \%>\% select(freq))
+freqs = freqs/sum(freqs)
+freqs = c(freqs,0)
+# prepare node labels listing the mutated genes for each node
+labels <- prepare.labels(samples, genes)
+# fix clonal
+fix <- fix.clonal.genotype(samples, freqs, labels)
+samples = fix[["samples"]]
+freqs = fix[["freqs"]]
+labels = fix[["labels"]]
+
+}

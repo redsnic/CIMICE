@@ -16,6 +16,7 @@ the described mutational matrix as a dataframe
 Read a "CAPRI" formatted file from the file system
 }
 \examples{
-read.CAPRI("pathToDataset/myDataset.CAPRI")
+#          "pathToDataset/myDataset.CAPRI"
+read.CAPRI("/home/redsnic/example.CAPRI")
 
 }
