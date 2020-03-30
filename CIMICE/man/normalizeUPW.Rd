@@ -21,9 +21,23 @@ normalizeUPW(g, freqs, no.of.children, A, upWeights)
 a vector containing the normalized Up weights for each edge
 }
 \description{
-Normalizes up weights so that the sum of weights of edges entering in a node is 1
+Normalizes up weights so that the sum
+of weights of edges entering in a node is 1
 }
 \examples{
+require(dplyr)
+require(igraph)
+preproc <- example.dataset() \%>\% dataset.preprocessing
+samples <- preproc[["samples"]]
+freqs   <- preproc[["freqs"]]
+labels  <- preproc[["labels"]]
+genes   <- preproc[["genes"]]
+g <- graph.non.transitive.subset.topology(samples, labels)
+# prepare adj matrix
+A <- as.matrix(as_adj(g))
+# pre-compute exiting edges from each node
+no.of.children <- get.no.of.children(A,g)
+upWeights <- computeUPW(g, freqs, no.of.children, A)
 normalizeUPW(g, freqs, no.of.children, A, upWeights)
 
 }
