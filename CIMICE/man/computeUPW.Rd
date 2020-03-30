@@ -19,14 +19,23 @@ computeUPW(g, freqs, no.of.children, A)
 a vector containing the Up weights for each edge
 }
 \description{
-Computes the up weights formula:
-}
-\details{
-\deqn{ W_{up}(<a,b> in E) = (1/|L_a|)(P(a) + \Sigma{for: x in \Pi_a}{of: W_{up}(<x,a>))}}
-
-using a Dinamic Programming approach (starting call), see vignettes for further explaination.
+Computes the up weights formula using
+a Dinamic Programming approach (starting call),
+see vignettes for further explaination.
 }
 \examples{
+require(dplyr)
+require(igraph)
+preproc <- example.dataset() \%>\% dataset.preprocessing
+samples <- preproc[["samples"]]
+freqs   <- preproc[["freqs"]]
+labels  <- preproc[["labels"]]
+genes   <- preproc[["genes"]]
+g <- graph.non.transitive.subset.topology(samples, labels)
+# prepare adj matrix
+A <- as.matrix(as_adj(g))
+# pre-compute exiting edges from each node
+no.of.children <- get.no.of.children(A,g)
 computeUPW(g, freqs, no.of.children, A)
 
 }
