@@ -28,7 +28,7 @@ To load the input use `CIMICE::read` family functions or the pair `CIMICE::make.
 
 ```{r cars}
 # read from file
-head(read.CAPRI("/home/redsnic/example.CAPRI"))
+head(read.CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE)))
 ```
 
 ```{r}
