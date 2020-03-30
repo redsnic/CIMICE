@@ -16,6 +16,6 @@ the described mutational matrix as a dataframe
 Read a "CAPRI" formatted file, as read.CAPRI
 }
 \examples{
-read("/home/redsnic/example.CAPRI")
+read(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
 
 }
