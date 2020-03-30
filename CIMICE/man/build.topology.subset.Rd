@@ -13,15 +13,17 @@ build.topology.subset(samples)
 the computed edge list
 }
 \description{
-Create an edge list E representing the 'subset' relation for binary strings so that:
+Create an edge list E representing the
+'subset' relation for binary strings so that:
 \deqn{ (A,B) in E <=> forall(i) : A[i] -> B[i] }
 }
 \examples{
-# compact dataset
-compactedDataset <- compact.dataset.easy(dataset)
-# turn it to matricial form
-samples <- as.matrix(compactedDataset \%>\% select(-freq))
-# compute topology
+require(dplyr)
+preproc <- example.dataset() \%>\% dataset.preprocessing
+samples <- preproc[["samples"]]
+freqs   <- preproc[["freqs"]]
+labels  <- preproc[["labels"]]
+genes   <- preproc[["genes"]]
 build.topology.subset(samples)
 
 }
