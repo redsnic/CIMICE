@@ -20,6 +20,14 @@ networkD3 object representing g as described
 Draws the output graph using networkD3
 }
 \examples{
+require(dplyr)
+preproc <- example.dataset() \%>\% dataset.preprocessing
+samples <- preproc[["samples"]]
+freqs   <- preproc[["freqs"]]
+labels  <- preproc[["labels"]]
+genes   <- preproc[["genes"]]
+g <- graph.non.transitive.subset.topology(samples, labels)
+W <- compute.weights.default(g, freqs)
 draw.networkD3(g,W,labels)
 
 }
