@@ -21,9 +21,25 @@ normalizeDWNW(g, freqs, no.of.children, A, downWeights)
 a vector containing the normalized Down weights for each edge
 }
 \description{
-Normalizes down weights so that the sum of weights of edges exiting a node is 1
+Normalizes Down weights so that the sum
+of weights of edges exiting a node is 1
 }
 \examples{
+require(dplyr)
+require(igraph)
+preproc <- example.dataset() \%>\% dataset.preprocessing
+samples <- preproc[["samples"]]
+freqs   <- preproc[["freqs"]]
+labels  <- preproc[["labels"]]
+genes   <- preproc[["genes"]]
+g <- graph.non.transitive.subset.topology(samples, labels)
+# prepare adj matrix
+A <- as.matrix(as_adj(g))
+# pre-compute exiting edges from each node
+no.of.children <- get.no.of.children(A,g)
+upWeights <- computeUPW(g, freqs, no.of.children, A)
+normUpWeights <- normalizeUPW(g, freqs, no.of.children, A, upWeights)
+downWeights <- computeDWNW(g, freqs, no.of.children, A, normUpWeights)
 normalizeUPW(g, freqs, no.of.children, A, downWeights)
 
 }
