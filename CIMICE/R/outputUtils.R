@@ -1,4 +1,4 @@
-
+utils::globalVariables(c("node1.label", "node2.label"))
 #' Ggplot graph output
 #'
 #' Draws the output graph using ggplot
@@ -11,9 +11,17 @@
 #' @return ggraph object representing g as described
 #'
 #' @examples
+#' require(dplyr)
+#' preproc <- example.dataset() %>% dataset.preprocessing
+#' samples <- preproc[["samples"]]
+#' freqs   <- preproc[["freqs"]]
+#' labels  <- preproc[["labels"]]
+#' genes   <- preproc[["genes"]]
+#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' W <- compute.weights.default(g, freqs)
 #' draw.ggraph(g,W,labels,digit = 3)
 #'
-#' @export
+#' @export draw.ggraph
 draw.ggraph <- function(g, W, labels, digits = 4){
     V(g)$label <- labels
 
@@ -42,9 +50,17 @@ draw.ggraph <- function(g, W, labels, digits = 4){
 #' @return networkD3 object representing g as described
 #'
 #' @examples
+#' require(dplyr)
+#' preproc <- example.dataset() %>% dataset.preprocessing
+#' samples <- preproc[["samples"]]
+#' freqs   <- preproc[["freqs"]]
+#' labels  <- preproc[["labels"]]
+#' genes   <- preproc[["genes"]]
+#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' W <- compute.weights.default(g, freqs)
 #' draw.networkD3(g,W,labels)
 #'
-#' @export
+#' @export draw.networkD3
 draw.networkD3 <- function(g, W, labels){
 
     V(g)$label <- labels
@@ -55,8 +71,8 @@ draw.networkD3 <- function(g, W, labels){
     # Create force directed network plot
     p<-forceNetwork(Links = gr$links, Nodes = gr$nodes,
                     Source = 'source', Target = 'target', Value = "value",
-                    NodeID = 'label', Group = 'name', zoom=T, arrows = T, opacityNoHover = 1)
-
+                    NodeID = 'label', Group = 'name',
+                    zoom=TRUE, arrows = TRUE, opacityNoHover = 1)
     p
 }
 
@@ -72,9 +88,17 @@ draw.networkD3 <- function(g, W, labels){
 #' @return visNetwork object representing g as described
 #'
 #' @examples
+#' require(dplyr)
+#' preproc <- example.dataset() %>% dataset.preprocessing
+#' samples <- preproc[["samples"]]
+#' freqs   <- preproc[["freqs"]]
+#' labels  <- preproc[["labels"]]
+#' genes   <- preproc[["genes"]]
+#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' W <- compute.weights.default(g, freqs)
 #' draw.visNetwork(g,W,labels)
 #'
-#' @export
+#' @export draw.visNetwork
 draw.visNetwork <- function(g, W, labels){
 
     V(g)$label <- labels
@@ -85,10 +109,11 @@ draw.visNetwork <- function(g, W, labels){
 
     nodes <- data.frame(
         id = gr$nodes$name,
-        label = 1:length(gr$nodes$label), #gr$nodes$label,
-        shadow = T,
+        label = seq(1,length(gr$nodes$label)), #gr$nodes$label,
+        shadow = TRUE,
         shape = "box",
-        title = paste0("<font color=\"black\"><p>Node:<br>", gr$nodes$label,"</p></font>")
+        title = paste0("<font color=\"black\"><p>Node:<br>",
+                    gr$nodes$label,"</p></font>")
     )
     # compute genotype difference from source to destination
     diff = map2(gr$links$source, gr$links$target,
@@ -103,12 +128,13 @@ draw.visNetwork <- function(g, W, labels){
         from = gr$links$source+1,
         to = gr$links$target+1,
         arrows = "to",
-        shadow = T,
+        shadow = TRUE,
         label = signif(gr$links$value, digits = 4),
         title = paste0("<font color=\"black\"><p>Edge:<br> from:",
-                       gr$nodes$label[gr$links$source+1] ,"<br>to : ",
-                       gr$nodes$label[gr$links$target+1] ,"<br>New mutations:<br>",
-                       diff, "</p></font>")
+                    gr$nodes$label[gr$links$source+1] ,"<br>to : ",
+                    gr$nodes$label[gr$links$target+1] ,
+                    "<br>New mutations:<br>",
+                    diff, "</p></font>")
     )
 
     grp <- toVisNetworkData(g, idToLabel = TRUE)
