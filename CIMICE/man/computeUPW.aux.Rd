@@ -21,14 +21,7 @@ computeUPW.aux(g, edge, freqs, no.of.children, A)
 a vector containing the Up weights for each edge
 }
 \description{
-Computes the up weights formula:
-}
-\details{
-\deqn{ W_{up}(<a,b> in E) = (1/|L_a|)(P(a) + \Sigma{for: x in \Pi_a}{of: W_{up}(<x,a>))}}
-
-using a Dinamic Programming approach (recursion), see vignettes for further explaination.
-}
-\examples{
-computeUPW.aux(g, edge, freqs, no.of.children, A)
-
+Computes the up weights formula using
+a Dinamic Programming approach (recursion),
+see vignettes for further explaination.
 }
