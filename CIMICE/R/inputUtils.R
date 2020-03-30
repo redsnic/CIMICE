@@ -47,7 +47,7 @@ read.CAPRI.string <- function(txt){
 #'
 #' @examples
 #' #          "pathToDataset/myDataset.CAPRI"
-#' read.CAPRI("/home/redsnic/example.CAPRI")
+#' read.CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
 #'
 #' @export read.CAPRI
 read.CAPRI <- function(filename){
@@ -73,7 +73,7 @@ read.CAPRI <- function(filename){
 #' @return the described mutational matrix as a dataframe
 #'
 #' @examples
-#' read("/home/redsnic/example.CAPRI")
+#' read(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
 #'
 #' @export read
 read <- read.CAPRI
