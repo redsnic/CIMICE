@@ -22,6 +22,14 @@ ggraph object representing g as described
 Draws the output graph using ggplot
 }
 \examples{
+require(dplyr)
+preproc <- example.dataset() \%>\% dataset.preprocessing
+samples <- preproc[["samples"]]
+freqs   <- preproc[["freqs"]]
+labels  <- preproc[["labels"]]
+genes   <- preproc[["genes"]]
+g <- graph.non.transitive.subset.topology(samples, labels)
+W <- compute.weights.default(g, freqs)
 draw.ggraph(g,W,labels,digit = 3)
 
 }
