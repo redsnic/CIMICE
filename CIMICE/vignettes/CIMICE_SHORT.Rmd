@@ -75,7 +75,6 @@ labels  <- preproc[["labels"]]
 genes   <- preproc[["genes"]]
 ```
 
-
 ## Build topology
 
 The default method to organize genotypes in a graph in CIMICE is based on the "subset" relation among them.
@@ -88,7 +87,6 @@ g <- graph.non.transitive.subset.topology(samples,labels)
 V(g)$vertex.size <- rep(10, length(V(g)))
 plot(g, vertex.size=rep(55, length(V(g))))
 ```
-
 
 ## Compute Weights
 
@@ -106,7 +104,6 @@ CIMICE supports many different output options, the reccomended one is based on "
 ```{r}
 draw.visNetwork(g, W, labels)
 ```
-
 
 ## Quick run
 
