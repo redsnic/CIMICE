@@ -15,7 +15,6 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 ```
 
-
 ## Short description
 
 This document is a presentation of the R implementation of the tool [CIMICE](https://github.com/redsnic/tumorEvolutionWithMarkovChains).
