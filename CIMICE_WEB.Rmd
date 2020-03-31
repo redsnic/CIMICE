@@ -11,7 +11,6 @@ your analisys and run the program by pressing the "Load new Dataset" button.
 knitr::opts_chunk$set(echo = F, fig.align="center")
 ```
 
-
 ```{r, error=F, message=F, results = "hide"}
 # Dataframe manipulation
 library(dplyr) 
@@ -51,7 +50,6 @@ if(!require(CIMICE)){
 ```
 
 ## Input
-
 
 ```{r, context="server"}
 
@@ -104,7 +102,7 @@ renderUI({
             tabPanel("networkD3", rv$nd3),
             tabPanel("ggraph", rv$gg)
         )
-    )
+    ) %>% shiny::tagAppendAttributes(style = 'width: 100%;')
 })
 ```
 
@@ -138,7 +136,7 @@ reactive({
     rv$vis <- renderVisNetwork({draw.visNetwork(rv$g, rv$weights, rv$labels)})
     
     rv$test <- toString(preproc)
-})
+}) 
 ```
 
 ## Dataset analysis
@@ -151,7 +149,7 @@ renderUI({
             tabPanel("Mutations per gene", rv$mutationspergene),
             tabPanel("Mutations per sample", rv$mutationspersample)
         )
-    )
+    ) %>% shiny::tagAppendAttributes(style = 'width: 100%;')
 })
 ```
 
@@ -163,7 +161,7 @@ reactive({
                     nrow = nrow(rv$dataset))
       colnames(m)<-colnames(rv$dataset)
       rownames(m)<-rownames(rv$dataset)
-      oncoPrint(m)
+      oncoPrint(m, show_column_names = TRUE)
     })
     rv$mutationspergene <- renderPlot({
         gene.mutations.hist(rv$dataset)
@@ -183,7 +181,7 @@ renderUI({
             tabPanel("Gene Based", rv$corrplotgene),
             tabPanel("Sample Based", rv$corrplotsample)
         )
-    )
+    ) %>% shiny::tagAppendAttributes(style = 'width: 100%;')
 })
 ```
 
@@ -200,7 +198,6 @@ reactive({
     })
 })
 ```
-
 
 ```{r}
 #run all
