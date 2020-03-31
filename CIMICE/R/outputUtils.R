@@ -76,7 +76,6 @@ draw.networkD3 <- function(g, W, labels){
     p
 }
 
-
 #' VisNetwork graph output (default)
 #'
 #' Draws the output graph using VisNetwork
