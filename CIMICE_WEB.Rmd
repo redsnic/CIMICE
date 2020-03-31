@@ -1,7 +1,5 @@
 ---
 title: "CIMICE Web App"
-author: "Nicolò Rossi"
-date: "7/3/2020"
 output: html_document
 runtime: shiny
 ---
@@ -54,7 +52,9 @@ if(!require(CIMICE)){
 
 ## Input
 
-```{r}
+
+```{r, context="server"}
+
 # Default example
 # genes
 dataset <- make.dataset(A,B,C,D) %>%
@@ -67,9 +67,7 @@ dataset <- make.dataset(A,B,C,D) %>%
   update_df("S6", 1, 1, 0, 1) %>%
   update_df("S7", 1, 0, 1, 1) %>%
   update_df("S8", 1, 1, 0, 1) 
-```
 
-```{r}
 
 rv <- reactiveValues()
 rv$dataset <- dataset
@@ -96,51 +94,22 @@ actionButton("loadData", "Load new dataset") %>% shiny::tagAppendAttributes(styl
 observeEvent(input$loadData, { rv$dataset <- read.CAPRI.string(input$inputDataset) })
 ```
 
-## Dataset analysis
-
-```{r}
-
-renderPlot({
-    m <- matrix(sapply( as.matrix(rv$dataset), FUN = function (x) if(x==0) " " else "MUT"), 
-                nrow = nrow(rv$dataset))
-  colnames(m)<-colnames(rv$dataset)
-  rownames(m)<-rownames(rv$dataset)
-  oncoPrint(m)
-})
-
-renderPlot({
-    gene.mutations.hist(rv$dataset)
-})  
-renderPlot({
-    sample.mutations.hist(rv$dataset, binwidth = 1)
-})  
-```
-
-## Correlation plots
-
-### Gene based
-```{r}
-renderPlot({
-    dataset <- rv$compacted.dataset
-    corrplot.genes(dataset)
-})
-```
-
-### Sample based
-
-```{r}
-renderPlot({
-    dataset <- rv$compacted.dataset
-    corrplot.samples(dataset)
-})
-```
-
 ## Output
 
-### Ggraph output
+```{r}
+renderUI({
+    mainPanel(
+        tabsetPanel(
+            tabPanel("visNetwork", rv$vis),
+            tabPanel("networkD3", rv$nd3),
+            tabPanel("ggraph", rv$gg)
+        )
+    )
+})
+```
 
 ```{r}
-renderPlot({
+reactive({
     # Resize dataset
     dataset <- rv$dataset
     if(input$limitedSize){
@@ -152,7 +121,7 @@ renderPlot({
     # Compact
     compactedDataset <- compact.dataset.easy(dataset)
     
-    preproc <- dataset.preprocessing(example.dataset())
+    preproc <- dataset.preprocessing(dataset)
     samples <- preproc[["samples"]]
     freqs   <- preproc[["freqs"]]
     labels  <- preproc[["labels"]]
@@ -163,23 +132,72 @@ renderPlot({
     rv$g <- g
     rv$weights <- W
     rv$labels <- labels
-    draw.ggraph(rv$g, rv$weights, rv$labels)
+  
+    rv$gg <- renderPlot({draw.ggraph(rv$g, rv$weights, rv$labels)})
+    rv$nd3 <- renderForceNetwork({draw.networkD3(rv$g, rv$weights, rv$labels)})
+    rv$vis <- renderVisNetwork({draw.visNetwork(rv$g, rv$weights, rv$labels)})
+    
+    rv$test <- toString(preproc)
 })
 ```
 
-### NetworkD3 output
+## Dataset analysis
 
 ```{r}
-renderForceNetwork({
-    draw.networkD3(rv$g, rv$weights, rv$labels)
+renderUI({
+    mainPanel(
+        tabsetPanel(
+            tabPanel("OncoPrint", rv$oncoprint),
+            tabPanel("Mutations per gene", rv$mutationspergene),
+            tabPanel("Mutations per sample", rv$mutationspersample)
+        )
+    )
 })
 ```
 
-### VisNetwork output
 
 ```{r}
-renderVisNetwork({
-    draw.visNetwork(rv$g, rv$weights, rv$labels)
+reactive({
+    rv$oncoprint <- renderPlot({
+        m <- matrix(sapply( as.matrix(rv$dataset), FUN = function (x) if(x==0) " " else "MUT"), 
+                    nrow = nrow(rv$dataset))
+      colnames(m)<-colnames(rv$dataset)
+      rownames(m)<-rownames(rv$dataset)
+      oncoPrint(m)
+    })
+    rv$mutationspergene <- renderPlot({
+        gene.mutations.hist(rv$dataset)
+    })  
+    rv$mutationspersample <- renderPlot({
+        sample.mutations.hist(rv$dataset, binwidth = 1)
+    })  
+})
+```
+
+## Correlation plots
+
+```{r}
+renderUI({
+    mainPanel(
+        tabsetPanel(
+            tabPanel("Gene Based", rv$corrplotgene),
+            tabPanel("Sample Based", rv$corrplotsample)
+        )
+    )
+})
+```
+
+```{r}
+reactive({
+    rv$corrplotgene <- renderPlot({
+        dataset <- rv$compacted.dataset
+        corrplot.genes(dataset)
+    })
+    
+    rv$corrplotsample <- renderPlot({
+        dataset <- rv$compacted.dataset
+        corrplot.samples(dataset)
+    })
 })
 ```
 
