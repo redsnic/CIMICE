@@ -142,7 +142,6 @@ normalizeUPW <- function(g, freqs, no.of.children, A, upWeights) {
     normUpWeights
 }
 
-
 #' Down weights computation
 #'
 #' Computes the Down weights formula using
