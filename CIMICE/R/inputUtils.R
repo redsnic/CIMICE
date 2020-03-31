@@ -36,7 +36,6 @@ read.CAPRI.string <- function(txt){
     df
 }
 
-
 #' Read a "CAPRI" file
 #'
 #' Read a "CAPRI" formatted file from the file system
@@ -179,7 +178,6 @@ sample.mutations.hist <- function(df, binwidth = 1){
             x = "Number of mutations",
             y = "Counts")
 }
-
 
 #' Filter dataset by genes' mutation count
 #'
@@ -365,7 +363,6 @@ build.topology.subset <- function(samples){
     edges
 }
 
-
 #' Remove transitive edges and prepare graph
 #'
 #' Create a graph from the "build.topology.subset" edge list, so
@@ -400,7 +397,6 @@ build.subset.graph <- function(edges, labels){
     V(g)$label <- labels
     g
 }
-
 
 #' Prepare node labels based on genotypes
 #'
