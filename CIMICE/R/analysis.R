@@ -157,13 +157,3 @@ quick.run <- function(dataset){
     W <- compute.weights.default(g, freqs)
     draw.visNetwork(g, W, labels)
 }
-
-
-
-
-
-
-
-
-
-
