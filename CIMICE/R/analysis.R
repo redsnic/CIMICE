@@ -27,7 +27,7 @@ example.dataset <- function(){
 
 #' Run CIMICE preprocessing
 #'
-#' executes the preprocessing steps of CIMICE:
+#' executes the preprocessing steps of CIMICE
 #'
 #' Preprocessing steps:
 #'
@@ -69,6 +69,50 @@ dataset.preprocessing <- function(dataset){
     # return a list with the prepared dataset and its additional information
     list("samples" = samples, "freqs" = freqs,
         "labels" = labels, "genes" = genes)
+}
+
+#' Run CIMICE preprocessing for poulation format dataset
+#'
+#' executes the preprocessing steps of CIMICE
+#'
+#' Preprocessing steps:
+#'
+#' 1) genotype frequencies are computed
+#'
+#' 2) labels are prepared
+#'
+#' @param dataset a mutational matrix as a dataframe (with freq column)
+#'
+#' @return a list containing the mutational matrix ("samples"),
+#' the mutational frequencies of the genotypes ("freqs"),
+#' the node labels ("labels") and finally the gene names ("genes")
+#'
+#' @examples
+#' require(dplyr)
+#' example.dataset() %>% dataset.preprocessing.population
+#'
+#' @export dataset.preprocessing.population
+dataset.preprocessing.population <- function(dataset){
+    # dataset is already compacted per hypothesys
+    compactedDataset <- dataset
+    # remove frequencies column from the compacted dataset
+    samples <- as.matrix(compactedDataset %>% select(-freq))
+    # save genes' names
+    genes = colnames(samples)
+    # keep the information on frequencies for further analysis
+    freqs = as.matrix(compactedDataset %>% ungroup() %>% select(freq))
+    freqs = freqs/sum(freqs)
+    freqs = c(freqs,0)
+    # prepare node labels listing the mutated genes for each node
+    labels <- prepare.labels(samples, genes)
+    # fix Colonal genotype absence, if needed
+    fix <- fix.clonal.genotype(samples, freqs, labels)
+    samples = fix[["samples"]]
+    freqs = fix[["freqs"]]
+    labels = fix[["labels"]]
+    # return a list with the prepared dataset and its additional information
+    list("samples" = samples, "freqs" = freqs,
+         "labels" = labels, "genes" = genes)
 }
 
 #' Default preparation of graph topology
