@@ -23,7 +23,7 @@ utils::globalVariables(c("sums","Samples"))
 #'
 #' @export read.CAPRI.string
 read.CAPRI.string <- function(txt){
-    df <- read.csv(text=txt, sep = " ", row.names=NULL)
+    df <- read.csv(text=txt, sep="", strip.white = TRUE, blank.lines.skip = TRUE, row.names = NULL)
     colnames(df)[1] = "Samples"
     # manage repeated rownames
     tryCatch({
@@ -50,7 +50,7 @@ read.CAPRI.string <- function(txt){
 #'
 #' @export read.CAPRI
 read.CAPRI <- function(filename){
-    df <- read.csv(filename, sep = " ", row.names=NULL)
+    df <- read.csv(filename, sep="", strip.white = TRUE, blank.lines.skip = TRUE, row.names = NULL)
     colnames(df)[1] = "Samples"
     # manage repeated rownames
     tryCatch({
@@ -434,7 +434,14 @@ prepare.labels <- function(samples, genes){
     # prepare labels with the alterated genes accordingly to node's bit vector
     labels = apply(samples, MARGIN = 1, FUN = function(x) genes[x==1] )
     # concatenate the genes' names
-    labels = lapply(labels, function (x) paste(x, collapse=", "))
+    labels = lapply(labels,
+        function (x){
+            if (length(x) > 0)
+                paste(x, collapse=", ")
+            else
+                "Clonal"
+        }
+    )
     labels
 }
 
