@@ -26,6 +26,6 @@ Preprocessing steps:
 }
 \examples{
 require(dplyr)
-example.dataset() \%>\% dataset.preprocessing.population
+example.dataset.withFreqs() \%>\% dataset.preprocessing.population
 
 }
