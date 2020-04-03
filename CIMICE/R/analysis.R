@@ -2,8 +2,6 @@
 # data analysis and to prepare working examples
 utils::globalVariables(c("A","B","C","D","freq"))
 
-# A simple test dataset
-
 #' Creates a simple example dataset
 #'
 #' @return a simple mutational matrix
@@ -23,6 +21,27 @@ example.dataset <- function(){
         update_df("S6", 1, 1, 0, 1) %>%
         update_df("S7", 1, 0, 1, 1) %>%
         update_df("S8", 1, 1, 0, 1)
+}
+
+#' Creates a simple example dataset with frequency column
+#'
+#' @return a simple mutational matrix
+#'
+#' @examples
+#' example.dataset.withFreqs()
+#'
+#' @export example.dataset.withFreqs
+example.dataset.withFreqs <- function(){
+    dataset <- make.dataset(A,B,C,D) %>% # genes
+        # samples
+        update_df("G1", 0, 0, 0, 1) %>%
+        update_df("G2", 1, 0, 0, 0) %>%
+        update_df("G3", 1, 0, 0, 1) %>%
+        update_df("G4", 1, 1, 0, 1) %>%
+        update_df("G5", 1, 0, 1, 1) %>%
+        update_df("G6", 1, 1, 0, 1)
+    freq <- c(1,2,1,2,1,1)
+    dataset %>% cbind(freq)
 }
 
 #' Run CIMICE preprocessing
@@ -89,7 +108,7 @@ dataset.preprocessing <- function(dataset){
 #'
 #' @examples
 #' require(dplyr)
-#' example.dataset() %>% dataset.preprocessing.population
+#' example.dataset.withFreqs() %>% dataset.preprocessing.population
 #'
 #' @export dataset.preprocessing.population
 dataset.preprocessing.population <- function(dataset){
@@ -112,7 +131,7 @@ dataset.preprocessing.population <- function(dataset){
     labels = fix[["labels"]]
     # return a list with the prepared dataset and its additional information
     list("samples" = samples, "freqs" = freqs,
-         "labels" = labels, "genes" = genes)
+        "labels" = labels, "genes" = genes)
 }
 
 #' Default preparation of graph topology
