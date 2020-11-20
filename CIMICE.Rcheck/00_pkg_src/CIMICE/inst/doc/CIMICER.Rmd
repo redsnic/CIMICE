@@ -1,0 +1,368 @@
+---
+title: "CIMICE: an R implementation"
+author: "Nicolò Rossi"
+date: "29/3/2020"
+output: 
+    html_document:
+        df_print: paged
+vignette: >
+    %\VignetteIndexEntry{CIMICE: an R implementation}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo=F}
+knitr::opts_chunk$set(echo = TRUE, fig.align="center")
+```
+
+## Short description
+
+This document is a presentation of the R implementation of the tool [CIMICE](https://github.com/redsnic/tumorEvolutionWithMarkovChains).
+It shows the main features of this software and how it is built as a modular pipeline, with the goal of making it easy to change and update.
+
+The process can be divided in four main sections:
+
+* Input management
+* Graph topology reconstruction
+* Graph weight computation
+* Output presentation
+
+## Used libraries 
+
+This implementation of CIMICE is built as a single library on its own:
+
+```{r, error=F, message=F, results = "hide"}
+library(CIMICE)
+```
+
+and it requires the following libraries: 
+
+```{r, error=F, message=F, results = "hide"}
+# Dataframe manipulation
+library(dplyr) 
+# Plot display
+library(ggplot2)
+# Improved string operations
+library(glue)
+# Dataframe manipulation
+library(tidyr)
+# Graph data management
+library(igraph)
+# Remove transitive edges on o graph
+library(relations)
+# Interactive graph visualization
+library(networkD3)
+# Interactive graph visualization
+library(visNetwork)
+# Correlation plot visualization
+library(ggcorrplot)
+# Functional R programming
+library(purrr)
+# Graph Visualization
+library(ggraph)
+```
+
+# Input management
+
+CIMICE requires a boolean dataframe as input, structured as follows:
+
+* Each column represents a gene
+* Each row represents a sample (or a genotype)
+* Each 0/1 represents if a given gene is mutated in a given sample 
+
+It is possible to load this information from a file. The default input format for CIMICE is the "CAPRI/CAPRESE" format:
+
+* The file is a tab or space separated file
+* The first line starts whith the string "s\\g" (or any other word) followed by the list of genes (or loci) to be considered in the analysis
+* Each subsequent line starts with a sample identifier string, followed by the bit set representing its genotype 
+
+This is a scheme of CIMICE's input format:
+
+```
+s\g       gene_1 gene_2 ... gene_n
+sample_1    1      0    ...   0
+...
+sample_m    1      1    ...   1
+```
+
+and this an example on how to load a dataset from the file system:
+
+```{r}
+# Read input dataset in CAPRI/CAPRESE format
+dataset.big <- read.CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
+```
+```{r, echo=F}
+head(dataset.big)
+```
+
+Another option is to define directly the dataframe in R. This is made easy by the functions `make.dataset` and `update_df`, used as follows:
+
+```{r}
+# genes
+dataset <- make.dataset(A,B,C,D) %>%
+    # samples
+    update_df("S1", 0, 0, 0, 1) %>%
+    update_df("S2", 1, 0, 0, 0) %>%
+    update_df("S3", 1, 0, 0, 0) %>%
+    update_df("S4", 1, 0, 0, 1) %>%
+    update_df("S5", 1, 1, 0, 1) %>%
+    update_df("S6", 1, 1, 0, 1) %>%
+    update_df("S7", 1, 0, 1, 1) %>%
+    update_df("S8", 1, 1, 0, 1) 
+```
+
+with the following outcome:
+
+```{r, echo=F}
+dataset
+as.matrix(dataset)
+```
+
+# Preliminary check of mutations distributions
+
+This implementation of CIMICE includes simple functions to quickly analyze the distributions of mutations among genes and samples.
+
+The following code displays an histogram showing the distribution of the number of mutations hitting a gene:
+
+```{r}
+gene.mutations.hist(dataset.big)
+```
+
+And this does the same but from the samples point of view:
+
+```{r}
+sample.mutations.hist(dataset.big, binwidth = 10)
+```
+
+## Simple procedures of feature selection
+
+In case of huge dataset, it could be necessary to focus only on a subset of the input samples or genes.
+The following procedures aim to provide an easy way to do so when the goal is to use the most (or least)
+mutated samples or genes.
+
+### By genes
+
+Keeps the first $n$ (=100) most mutated genes: 
+
+```{r}
+select.genes.on.mutations(dataset.big, 100)
+```
+
+### By samples
+
+Keeps the first $n$ (=100) least mutated samples: 
+
+```{r}
+select.samples.on.mutations(dataset.big, 100, desc = FALSE)
+```
+
+## Both selections
+
+It is easy to combine these selections by using the pipe operator `%>%`:
+
+```{r}
+select.samples.on.mutations(dataset.big , 100, desc = FALSE) %>% select.genes.on.mutations(100)
+```
+
+## Correlation plot
+
+It may be of interest to show correlations among gene or sample mutations. The library `corrplots` provides an easy way to do so by preparing an 
+heatmap based on the correlation matrix. We can show these plots by using the following comands:
+
+gene mutations correlation:
+
+```{r}
+corrplot.genes(dataset)
+```
+
+sample mutations correlation:
+
+```{r}
+corrplot.samples(dataset)
+```
+
+## Group equal genotypes
+
+The first step of the CIMICE algorithm is based on grouping the genotypes contained in the dataset to compute their observed frequencies.
+In this implementation we used a simple approach using the library `dplyr`. However, this solution is far for optimal from an efficiency
+point of view and might be problematic with very large datasets. It is possible to easily modify this step by changing the algorithm
+as long as its output is a dataframe containing only unique genotypes with an additional column named "freq" for the observed frequencies count.
+
+```{r}
+# groups and counts equal genotypes
+compactedDataset <- compact.dataset.easy(dataset)
+```
+```{r, echo=F}
+head(compactedDataset)
+```
+
+# Graph topology construction
+
+The subsequent stage goal is to prepare the topology for the final Cancer Progression Markov Chain. We racall that this topology is assumed to be 
+a DAG. These eraly steps are required to prepare the information necessary for this and the following pahses.
+
+Convert dataset to matricial form:
+
+```{r}
+samples <- as.matrix(compactedDataset %>% select(-freq))
+```
+```{r,echo=F}
+samples
+```
+
+Extract gene names:
+
+```{r}
+genes = colnames(samples)
+```
+```{r,echo=F}
+genes
+```
+
+Compute observed frequency of each genotype:
+
+```{r}
+freqs = as.matrix(compactedDataset %>% ungroup() %>% select(freq))
+freqs = freqs/sum(freqs)
+freqs = c(freqs,0)
+```
+```{r,echo=F}
+freqs
+```
+
+Add "Clonal" genotype to the dataset (if not present) that will be used as DAG root:
+
+```{r}
+# prepare node labels listing the mutated genes for each node
+labels <- prepare.labels(samples, genes)
+# fix Colonal genotype absence, if needed
+fix <- fix.clonal.genotype(samples, freqs, labels)
+samples = fix[["samples"]]
+freqs = fix[["freqs"]]
+labels = fix[["labels"]]
+```
+```{r,echo=F}
+samples
+```
+
+Build the topology of the graph based on the "superset" relation: 
+
+```{r}
+# compute edges based on subset relation
+edges <- build.topology.subset(samples)
+```
+
+and finally prepare and show with the current topology of the graph:
+
+```{r}
+# remove transitive edges and prepare igraph object
+g <- build.subset.graph(edges, labels)
+```
+
+that can be (badly) plotted using basic igraph:
+
+```{r, echo=F}
+V(g)$vertex.size <- rep(10, length(V(g)))
+plot(g, vertex.size=rep(55, length(V(g))))
+```
+
+# Graph weight computation
+
+In this sections, it is shown how to call the procedures to the four steps weight computation used in CIMICE. This is in fact based in computing 
+"UP" weights, normalized "UP" weights, "DOWN" weights and normalized "DOWN" weights.
+
+The process is based on the graph adjacency matrix "A":
+
+```{r}
+A <- as.matrix(as_adj(g))
+```
+```{r, echo=F}
+A
+```
+
+and on the number of successors for each node:
+
+```{r}
+no.of.children <- get.no.of.children(A,g)
+```
+```{r, echo=F}
+no.of.children
+```
+
+### "UP" weights
+
+$$W_{up}(\langle a,b \rangle \in E) = \frac{1}{ |\Lambda_a|}(P(a) + \sum_{x\in \Pi_a}W_{up}(\langle x,a \rangle)) $$
+given that $\Lambda_a$ and $\Pi_a$ denote the set of children of a node $a$ and the set of parents of a node $a$ respectively and that $P(a)$ is the observed frequency of node $a$.
+
+```{r}
+upWeights <- computeUPW(g, freqs, no.of.children, A)
+```
+```{r, echo=F}
+upWeights
+```
+
+### "UP" weights normalization
+
+$$\overline{W}_{up}(\langle a,b \rangle \in E_1) = \begin{cases}
+                                                            1 & \mbox{if $a[0]=\emptyset$} \\
+                                                            \frac{ W_{up}(\langle a,b \rangle \in E)}{\sum_{x \in \Pi_b} W_{up}(\langle x,b \rangle)} & \mbox{else} 
+                                                \end{cases}$$   
+
+```{r}
+normUpWeights <- normalizeUPW(g, freqs, no.of.children, A, upWeights)
+```
+```{r, echo=F}
+normUpWeights
+```
+
+### "DOWN" Weights
+
+$$W_{down}(\langle a,b \rangle) = \overline{W}_{up}(\langle a,b \rangle)(P(b) + \sum_{x\in \Lambda_b}W_{down}(\langle b,x \rangle))$$
+
+
+```{r}
+downWeights <- computeDWNW(g, freqs, no.of.children, A, normUpWeights)
+```
+```{r, echo=F}
+downWeights
+```
+
+### "DOWN" weights normalization
+
+$$ P(\langle a,b \rangle) = \overline{W}_{down}(\langle a,b \rangle) = \frac{W_{down}(\langle a,b \rangle)}{\sum_{x\in \Lambda_a}{W_{down}(\langle a,x \rangle)}} $$
+
+```{r}
+normDownWeights <- normalizeDWNW(g, freqs, no.of.children, A, downWeights)
+```
+```{r, echo=F}
+normDownWeights
+```
+
+# Output presentation
+
+To better show the results of the analysis there were prepared three ouput methods based on three different libraries: `ggraph`, `networkD3` and 
+`visNetwork`. These libraries improve the dafault `igraph` output visualization.
+
+This is the output based on `ggraph`, it is ideal for small graphs but, for legibility reasons, it is better not to use it with long labels.
+
+```{r}
+draw.ggraph(g, normDownWeights, labels)
+```
+
+The `networkD3` is a quite valid interactive approach, but it lacks the option to draw labels on edges, limiting the representation to thicker or thinner edges.
+
+```{r}
+draw.networkD3(g, normDownWeights, labels)
+```
+
+The `visNetwork` approach is overall the best for interactive purposes. It allows almost arbitrary long labels, as it is compatible with `HTML` elements and
+in particular with textboxes and the "hovering condition" for vertex and edges.
+
+```{r}
+draw.visNetwork(g, normDownWeights, labels)
+```
+
+```{r, echo=FALSE}
+# run ALL
+```
+
