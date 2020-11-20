@@ -1,7 +1,0 @@
-"0","n <- 100"
-"0","temp.df <- dataset"
-"0",""
-"0","# ordinamento per somma"
-"0","temp.df$sums <- rowSums(temp.df[,2:ncol(temp.df)], na.rm = TRUE)"
-"0","temp.df <- temp.df[order(temp.df$sums),][1:n,] %>% select(-sums)"
-"0","temp.df"
