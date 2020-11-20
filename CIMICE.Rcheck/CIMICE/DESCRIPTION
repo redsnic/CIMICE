@@ -18,11 +18,19 @@ Description:
 License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
-Imports: dplyr, ggplot2, glue, tidyr, igraph, networkD3, visNetwork, ggcorrplot, purrr, ggraph, plyr, stats, utils, relations
+Imports: dplyr, ggplot2, glue, tidyr, igraph, networkD3, visNetwork,
+        ggcorrplot, purrr, ggraph, plyr, stats, utils, relations
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Suggests: knitr, rmarkdown
-biocViews: BiomedicalInformatics, DataImport, Phylogenetics, GraphAndNetwork, ImmunoOncology, Network, NetworkInference, SingleCell, Software, SomaticMutation, Preprocessing
+biocViews: BiomedicalInformatics, DataImport, Phylogenetics,
+        GraphAndNetwork, ImmunoOncology, Network, NetworkInference,
+        SingleCell, Software, SomaticMutation, Preprocessing
 BugReports: https://github.com/redsnic/CIMICE-R/issues
 URL: https://github.com/redsnic/CIMICE-R
 BiocType: Software
+NeedsCompilation: no
+Packaged: 2020-11-20 17:55:46 UTC; redsnic
+Author: Nicolò Rossi Mantainer [aut, cre]
+Maintainer: Nicolò Rossi Mantainer <olocin.issor@gmail.com>
+Built: R 4.0.2; ; 2020-11-20 17:55:54 UTC; unix
