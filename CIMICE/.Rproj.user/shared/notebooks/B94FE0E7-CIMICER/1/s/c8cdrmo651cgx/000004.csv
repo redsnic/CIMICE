@@ -1,0 +1,2 @@
+"0","temp <- select.samples.on.mutations(dataset.big , 100, desc = FALSE) %>% select.genes.on.mutations(100)"
+"0","temp %>% show.df(6,6) "
