@@ -1,0 +1,24 @@
+{
+    "id": "C73BA7B1",
+    "path": "~/git/CIMICE-R/CIMICE/R/outputUtils.R",
+    "project_path": "R/outputUtils.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1606057021643.0,
+    "source_on_save": false,
+    "relative_order": 10,
+    "properties": {
+        "cursorPosition": "144,0",
+        "scrollLine": "136"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1606122232,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1606122232955,
+    "read_only": false,
+    "read_only_alternatives": []
+}
