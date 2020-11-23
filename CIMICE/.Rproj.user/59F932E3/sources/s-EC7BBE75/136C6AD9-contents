@@ -2,3 +2,12 @@ CIMICE/doc
 CIMICE/Meta
 CIMICE/.Rhistory
 CIMICE/CIMICE.Rproj
+
+
+# RStudio files
+CIMICE/*.RData
+CIMICE/.Rproj.user/
+CIMICE/.Rproj
+CIMICE/.Rproj.user
+CIMICE/*.Rdata
+CIMICE/*.Rproj
