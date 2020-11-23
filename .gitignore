@@ -11,3 +11,8 @@ CIMICE/.Rproj
 CIMICE/.Rproj.user
 CIMICE/*.Rdata
 CIMICE/*.Rproj
+
+# History files
+CIMICE/.Rhistory
+CIMICE/.Rapp
+CIMICE/*.history
