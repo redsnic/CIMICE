@@ -1,7 +1,0 @@
-"0","# prepare node labels listing the mutated genes for each node"
-"0","labels <- prepare.labels(samples, genes)"
-"0","# fix Colonal genotype absence, if needed"
-"0","fix <- fix.clonal.genotype(samples, freqs, labels)"
-"0","samples = fix[[""samples""]]"
-"0","freqs = fix[[""freqs""]]"
-"0","labels = fix[[""labels""]]"
