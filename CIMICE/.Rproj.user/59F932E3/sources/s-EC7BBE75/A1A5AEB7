@@ -1,0 +1,24 @@
+{
+    "id": "A1A5AEB7",
+    "path": "~/git/CIMICE-R/CIMICE/tests/QuickPipelineTest.R",
+    "project_path": "tests/QuickPipelineTest.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1606124227318.0,
+    "source_on_save": false,
+    "relative_order": 12,
+    "properties": {
+        "cursorPosition": "22,84",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1606124963,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1606124963233,
+    "read_only": false,
+    "read_only_alternatives": []
+}
