@@ -1,0 +1,6 @@
+"0","show.df <- function(df, w, h){"
+"0","    df[1:h,1:w]"
+"0","}"
+"0","size.df <- function(df){"
+"0","    paste(""ncol:"", ncol(df), "" - nrow:"", nrow(df))"
+"0","}"
