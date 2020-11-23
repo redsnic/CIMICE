@@ -140,3 +140,48 @@ draw.visNetwork <- function(g, W, labels){
 
     visNetwork(nodes, edges)
 }
+
+
+#' Dot graph output
+#'
+#' Represents this graph in dot format (a textual output format)
+#'
+#' @param g graph to be drawn
+#' @param W weights on edges
+#' @param labels node labels
+#'
+#' @return a string representing the graph in dot format
+#'
+#' @examples
+#' require(dplyr)
+#' require(purrr)
+#' preproc <- example.dataset() %>% dataset.preprocessing
+#' samples <- preproc[["samples"]]
+#' freqs   <- preproc[["freqs"]]
+#' labels  <- preproc[["labels"]]
+#' genes   <- preproc[["genes"]]
+#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' W <- compute.weights.default(g, freqs)
+#' to.dot(g,W,labels)
+#'
+#' @export to.dot
+to.dot <- function(g, W, labels){
+
+    V(g)$label <- labels
+    E(g)$label <- W
+
+    str <- paste(
+        "digraph G{",
+        paste(
+            imap_chr(V(g)$label, ~ paste( .y, '[label="', .x ,'"]', sep="") ),
+            collapse = "\n"),
+        paste(
+            imap_chr(E(g), ~ paste(tail_of(g, E(g)[[.y]]), " -> ", head_of(g, E(g)[[.y]]), '[label="', round(W[.y], digits = 3) , '"]', sep="" )),
+            collapse = "\n"),
+        "}",
+        sep="\n"
+    )
+
+    str
+}
+
