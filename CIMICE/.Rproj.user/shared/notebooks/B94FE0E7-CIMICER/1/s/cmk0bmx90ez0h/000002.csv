@@ -1,2 +1,0 @@
-"0","# Read input dataset in CAPRI/CAPRESE format"
-"0","dataset.big <- read.CAPRI(system.file(""extdata"", ""example.CAPRI"", package = ""CIMICE"", mustWork = TRUE))"
