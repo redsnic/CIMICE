@@ -1,0 +1,26 @@
+{
+    "id": "B8F4E911",
+    "path": "~/git/CIMICE-R/CIMICE/man/CIMICE.Rd",
+    "project_path": "man/CIMICE.Rd",
+    "type": "r_doc",
+    "hash": "3925996805",
+    "contents": "",
+    "dirty": false,
+    "created": 1605991528381.0,
+    "source_on_save": false,
+    "relative_order": 9,
+    "properties": {
+        "cursorPosition": "0,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1605991959,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1605991959,
+    "read_only": true,
+    "read_only_alternatives": [
+        "R/CIMICE.R"
+    ]
+}
