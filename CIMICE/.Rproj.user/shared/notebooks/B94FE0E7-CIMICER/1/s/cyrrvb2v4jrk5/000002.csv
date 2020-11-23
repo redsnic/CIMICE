@@ -1,2 +1,0 @@
-"0","# remove transitive edges and prepare igraph object"
-"0","g <- build.subset.graph(edges, labels)"
