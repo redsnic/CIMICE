@@ -2,7 +2,7 @@
 
 \name{NEWS}
 \title{News for Package 'CIMICE-R'}
-  \section{Changes in ouch version 0.1}{
+  \section{Changes in ouch version 0.1.0}{
 
   \subsection{Overview:}{
       \itemize{
