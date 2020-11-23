@@ -1,0 +1,2 @@
+"0","V(g)$vertex.size <- rep(10, length(V(g)))"
+"0","plot(g, vertex.size=rep(55, length(V(g))))"
