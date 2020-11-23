@@ -1,0 +1,3 @@
+"0","freqs = as.matrix(compactedDataset %>% ungroup() %>% select(freq))"
+"0","freqs = freqs/sum(freqs)"
+"0","freqs = c(freqs,0)"
