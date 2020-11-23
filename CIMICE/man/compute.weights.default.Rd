@@ -4,7 +4,7 @@
 \alias{compute.weights.default}
 \title{Compute default weights}
 \usage{
-compute.weights.default(g, freqs)
+\method{compute}{weights.default}(g, freqs)
 }
 \arguments{
 \item{g}{a graph (must be a DAG with no transitive edges)}
