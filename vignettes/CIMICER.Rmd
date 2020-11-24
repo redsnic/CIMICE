@@ -10,12 +10,10 @@ output:
     BiocStyle::html_document:
         toc_float: true
         df_print: kable
-    BiocStyle::pdf_document: default
-        
 vignette: >
+    %\VignetteEncoding{UTF-8}
     %\VignetteIndexEntry{CIMICE-R: (Markov) Chain Method to Infer Cancer Evolution}
     %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8}
 ---
 
 ```{r style, echo = FALSE, results = 'asis'}
