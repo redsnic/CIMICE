@@ -110,7 +110,8 @@ draw.visNetwork(g, W, labels)
 To quickly run CIMICE in its default settings, use `CIMICE::quick.run`
 
 ```{r}
-quick.run(example.dataset())
+ans <- quick.run(example.dataset())
+draw.visNetwork(ans$topology, ans$weights, ans$labels)
 ```
 
 
