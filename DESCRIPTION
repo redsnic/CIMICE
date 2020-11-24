@@ -16,8 +16,21 @@ Description:
     original Java version of this tool.
 License: Artistic-2.0
 Encoding: UTF-8
-LazyData: true
-Imports: dplyr, ggplot2, glue, tidyr, igraph, networkD3, visNetwork, ggcorrplot, purrr, ggraph, plyr, stats, utils, relations
+Imports: 
+    dplyr,
+    ggplot2,
+    glue,
+    tidyr,
+    igraph,
+    networkD3,
+    visNetwork,
+    ggcorrplot, 
+    purrr,
+    ggraph, 
+    plyr,
+    stats,
+    utils,
+    relations
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Suggests: 
@@ -26,7 +39,18 @@ Suggests:
     rmarkdown,
     testthat,
     webshot
-biocViews: BiomedicalInformatics, DataImport, Phylogenetics, GraphAndNetwork, ImmunoOncology, Network, NetworkInference, SingleCell, Software, SomaticMutation, Preprocessing
+biocViews: 
+    BiomedicalInformatics,
+    DataImport,
+    Phylogenetics,
+    GraphAndNetwork,
+    ImmunoOncology,
+    Network,
+    NetworkInference,
+    SingleCell,
+    Software,
+    SomaticMutation, 
+    Preprocessing
 BugReports: https://github.com/redsnic/CIMICE-R/issues
 URL: https://github.com/redsnic/CIMICE-R
 BiocType: Software
