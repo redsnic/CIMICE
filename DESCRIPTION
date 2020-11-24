@@ -24,7 +24,8 @@ Suggests:
     BiocStyle,
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    webshot
 biocViews: BiomedicalInformatics, DataImport, Phylogenetics, GraphAndNetwork, ImmunoOncology, Network, NetworkInference, SingleCell, Software, SomaticMutation, Preprocessing
 BugReports: https://github.com/redsnic/CIMICE-R/issues
 URL: https://github.com/redsnic/CIMICE-R
