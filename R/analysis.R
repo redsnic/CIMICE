@@ -202,21 +202,30 @@ compute.weights.default <- function(g, freqs){
 #' This function executes CIMICE analysis on a dataset using default settings.
 #'
 #' @param dataset a mutational matrix as a data frame
+#' @param mode indicates the used input format. Must be either "CAPRI" or "CAPRIpop"
 #'
-#' @return a visNetwork object representing the graph computed by CIMICE
+#' @return a list object representing the graph computed by CIMICE with the
+#' structure `list(topology = g, weights = W, labels = labels)`
 #'
 #' @examples
 #' quick.run(example.dataset())
 #'
 #' @export quick.run
-quick.run <- function(dataset){
+quick.run <- function(dataset, mode="CAPRI"){
     # preprocess
-    preproc <- dataset.preprocessing(example.dataset())
+    preproc <- NULL
+    if(mode == "CAPRI"){
+        preproc <- dataset.preprocessing(dataset)
+    }else if(mode == "CAPRIpop"){
+        preproc <- dataset.preprocessing.population(dataset)
+    }else{
+        stop(paste("Unsupported input mode", mode, "use CAPRI o CAPRIpop"))
+    }
     samples <- preproc[["samples"]]
     freqs   <- preproc[["freqs"]]
     labels  <- preproc[["labels"]]
     genes   <- preproc[["genes"]]
     g <- graph.non.transitive.subset.topology(samples,labels)
     W <- compute.weights.default(g, freqs)
-    draw.visNetwork(g, W, labels)
+    list(topology = g, weights = W, labels = labels)
 }
