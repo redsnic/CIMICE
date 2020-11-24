@@ -1,15 +1,15 @@
-CIMICE/doc
-CIMICE/Meta
+doc
+Meta
 
 
 # RStudio files
-CIMICE/*.RData
-CIMICE/.Rproj.user/
-CIMICE/.Rproj
-CIMICE/*.Rdata
-CIMICE/*.Rproj
+*.RData
+.Rproj.user/
+.Rproj
+*.Rdata
+*.Rproj
 
 # History files
-CIMICE/.Rhistory
-CIMICE/.Rapp
-CIMICE/*.history
+.Rhistory
+.Rapp
+*.history
