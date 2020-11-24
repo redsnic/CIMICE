@@ -4,13 +4,16 @@
 \alias{quick.run}
 \title{Run CIMICE defaults}
 \usage{
-quick.run(dataset)
+quick.run(dataset, mode = "CAPRI")
 }
 \arguments{
 \item{dataset}{a mutational matrix as a data frame}
+
+\item{mode}{indicates the used input format. Must be either "CAPRI" or "CAPRIpop"}
 }
 \value{
-a visNetwork object representing the graph computed by CIMICE
+a list object representing the graph computed by CIMICE with the
+structure `list(topology = g, weights = W, labels = labels)`
 }
 \description{
 This function executes CIMICE analysis on a dataset using default settings.
