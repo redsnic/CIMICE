@@ -4,16 +4,18 @@ Title: CIMICE-R: (Markov) Chain Method to Inferr Cancer Evolution
 Version: 0.99.0
 Authors@R: 
     c(
-        person("Nicolò Rossi", "Mantainer", role=c("aut", "cre"), email="olocin.issor@gmail.com")
+        person("Nicolò Rossi", "Mantainer", 
+            role=c("aut", "cre"), email="olocin.issor@gmail.com")
     )
 Description: 
     CIMICE is a tool in the field of tumor phylogenetics and
-    its goal is to build a Markov Chain (called Cancer Progression Markov Chain, CPMC) in order to model tumor subtypes evolution.
-    The input of CIMICE is a Mutational Matrix, so a boolean matrix representing altered genes in a
-    collection of samples. These samples are assumed to be obtained with single-cell DNA analysis techniques and
-    the tool is specifically written to use the peculiarities of this data for the CMPC construction.
-    See `https://github.com/redsnic/tumorEvolutionWithMarkovChains/tree/master/GenotypeEvolutionPaths` for the
-    original Java version of this tool.
+    its goal is to build a Markov Chain (called Cancer Progression Markov Chain,
+    CPMC) in order to model tumor subtypes evolution.
+    The input of CIMICE is a Mutational Matrix, so a boolean matrix representing
+    altered genes in a collection of samples. These samples are assumed to be
+    obtained with single-cell DNA analysis techniques and the tool is 
+    specifically written to use the peculiarities of this data for the CMPC
+    construction.
 License: Artistic-2.0
 Encoding: UTF-8
 Imports: 
@@ -51,6 +53,6 @@ biocViews:
     Software,
     SomaticMutation, 
     Preprocessing
-BugReports: https://github.com/redsnic/CIMICE-R/issues
-URL: https://github.com/redsnic/CIMICE-R
+BugReports: https://github.com/redsnic/CIMICE/issues
+URL: https://github.com/redsnic/CIMICE
 BiocType: Software
