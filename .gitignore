@@ -13,3 +13,4 @@ Meta
 .Rhistory
 .Rapp
 *.history
+inst/doc
