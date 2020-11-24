@@ -149,6 +149,23 @@ with the following outcome:
 dataset
 ```
 
+In the case your data is composed by samples with associated frequencies it is possible to use an alternative format
+that we call "CAPRIpop":
+
+```
+s/g    gene_1 gene_2 ... gene_n freq
+sample_1 1 0 ... 0 freq_s1
+...
+sample_m 1 1 ... 1 freq_sm
+```
+
+where the `freq` column is mandatory and sample must not be repeated. Frequencies
+in the `freq` column will be automatically normalized. This format is meant
+to be used with the functions `quick.run(dataset, mode="CAPRIpop")` for the
+full analysis and `dataset.preprocessing.population(...)` for the preprocessing
+stage only. The subsequent operations remain otherwise equal to those 
+of the default format.
+
 # Preliminary check of mutations distributions
 
 This implementation of CIMICE includes simple functions to quickly analyze the distributions of mutations among genes and samples.
@@ -402,7 +419,7 @@ The `networkD3` is a quite valid interactive approach, but it lacks the option t
 draw.networkD3(g, normDownWeights, labels)
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, out.width = "100%", out.height="100%"}
 knitr::include_graphics("networkD3.png")
 ```
 
@@ -413,13 +430,17 @@ in particular with textboxes and the "hovering condition" for vertex and edges.
 ```{r, results = 'hide'}
 draw.visNetwork(g, normDownWeights, labels)
 ```
-```{r, echo=FALSE}
+```{r, echo=FALSE, out.width = "100%", out.height="100%"}
 knitr::include_graphics("visGraph.png")
 ```
 
-```{r, echo=FALSE}
-# run ALL
+Finally, it is also possible to export CIMICE's output to the standard [dot format](https://en.wikipedia.org/wiki/DOT_%28graph_description_language%29)
+for use in other visualization applications.
+
+```{r}
+cat( to.dot(g, normDownWeights, labels) )
 ```
+
 
 ## Session information
 
@@ -473,3 +494,6 @@ This vignette was prepared using a R session with the following specifications:
 ## [55] compiler_4.1.0
 ```
 
+```{r, echo=FALSE}
+# run ALL
+```
