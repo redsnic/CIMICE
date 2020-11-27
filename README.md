@@ -16,7 +16,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install()
 
 # additional dependencies
-deps <- c("knitr", "rmarkdown", "testthat", "webshot")
+deps <- c("knitr", "rmarkdown", "testthat", "webshot", "devtools")
 for(d in deps){
     if(!require(d)){
         install.packages(d)
