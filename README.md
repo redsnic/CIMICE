@@ -25,7 +25,7 @@ for(d in deps){
 BiocManager::install("BiocStyle")
 
 # install package
-devtools::install_github("redsnic/CIMICE-R", build_vignettes = TRUE)
+devtools::install_github("redsnic/CIMICE", build_vignettes = TRUE)
 library(CIMICE)
 
 # simple example
