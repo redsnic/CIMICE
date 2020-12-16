@@ -1,0 +1,27 @@
+# --- Treatment description file --- 
+# (comment lines start with '#')
+# Format:
+#
+# drugName {
+#   [guard] action action_params;
+#   [guard] kill efficacy;
+#   [guard] mutate [ Gene1, -Gene2, ... ] efficacy; # "-Gene" means remove Gene 
+# }
+#
+# drugName2 { ... }
+# ...
+#
+# Syntax of guards 
+# (they describe the genotype necessary to apply the effects of the drug)
+#                 not      and             or
+# guard := GENE ; - GENE ; guard & guard ; guard | guard ; ( guard )  
+
+firstDrug { 
+    [AAA | BBB] kill 0.9;
+} 
+ 
+secondDrug {
+    [(AAA & BBB) | CCC] mutate [AAA,-BBB] 0.5; 
+    [ccc] kill 0.2;
+}
+
