@@ -185,3 +185,99 @@ to.dot <- function(g, W, labels){
     str
 }
 
+#' to prism module
+#'
+#' convert this graph to a prism model
+#'
+#' @param g graph to be drawn
+#' @param W weights on edges
+#' @param labels node labels
+#'
+#' @return a string representing the graph as a prism model
+#'
+#' @examples
+#' require(dplyr)
+#' require(purrr)
+#' require(igraph)
+#' preproc <- example.dataset() %>% dataset.preprocessing
+#' samples <- preproc[["samples"]]
+#' freqs   <- preproc[["freqs"]]
+#' labels  <- preproc[["labels"]]
+#' genes   <- preproc[["genes"]]
+#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' W <- compute.weights.default(g, freqs)
+#' to.prism(g,W,labels)
+#'
+#' @export to.prism
+to.prism <- function(g, W, labels){
+    V(g)$label <- labels
+    E(g)$label <- W
+    g_ <- set.edge.attribute(g, "weight", index=E(g), W)
+    W_ <- as_adjacency_matrix(g_, attr = "weight",sparse = F)
+    W_ <- add.self.loops(W_)
+    str <- paste(
+        "dtmc", "module M", paste("\tx : [1..", length(V(g)) ,"] init 1;", sep=""),
+        paste(format_transition_probabilities(W_), collapse = "\n"),
+        "endmodule",
+        sep="\n"
+    )
+
+    str
+}
+
+#' format transition probabilities
+#'
+#' convert a transition probability matrix into transitions written
+#' in prism syntax
+#'
+#' @param W a transition probability matrix
+#'
+#' @return a character vector containing the transitions in prism syntax
+#'
+#' @examples
+#' W <- matrix(c(0.3,0.3,0.4,0,0.5,0.5,1,0,0), nrow=3, byrow=TRUE)
+#' format_transition_probabilities(W)
+#'
+#' @export format_transition_probabilities
+format_transition_probabilities <- function(W){
+    out <- rep("", ncol(W))
+    for(i in 1:nrow(W)){
+        first <- TRUE
+        for(j in 1:ncol(W)){
+            if(W[i,j] != 0){
+                if(first){
+                    out[i] <- paste("\t[] x=", i, " -> ", W[i,j], ":(x'=", j, ")", sep="")
+                    first <- FALSE
+                }else{
+                    out[i] <- paste(out[i], " + ", W[i,j], ":(x'=", j, ")", sep="")
+                }
+            }
+        }
+        out[i] <- paste(out[i], ";", sep="")
+    }
+    out
+}
+
+#' add self loops on sink nodes
+#'
+#' given a transition probability matrix, this procedures adds
+#' self loops to sink nodes (nodes without any exiting edge)
+#'
+#' @param W a transition probability matrix
+#'
+#' @return the updated probability matrix with self loops
+#'
+#' @examples
+#' W = matrix(c(0,0,0,0,0.5,0.5,1,0,0), nrow=3, byrow=TRUE)
+#' add.self.loops(W)
+#'
+#' @export add.self.loops
+add.self.loops <- function(W){
+    for(i in 1:nrow(W)){
+        # check if there are no exiting edges
+        if(sum(W[i,]) == 0){
+            W[i,i] <- 1
+        }
+    }
+    W
+}

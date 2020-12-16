@@ -23,6 +23,7 @@
 #' @importFrom igraph V E as_ids tail_of head_of get.edge.ids
 #' @importFrom igraph graph_from_adjacency_matrix as_edgelist
 #' @importFrom igraph graph_from_edgelist as_adj E<- V<-
+#' @importFrom igraph as_adjacency_matrix set.edge.attribute
 #' @importFrom networkD3 igraph_to_networkD3 forceNetwork
 #' @importFrom visNetwork toVisNetworkData visNetwork
 #' @importFrom ggcorrplot ggcorrplot
