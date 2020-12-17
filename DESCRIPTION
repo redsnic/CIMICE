@@ -32,7 +32,8 @@ Imports:
     plyr,
     stats,
     utils,
-    relations
+    relations,
+    rly
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Suggests: 
