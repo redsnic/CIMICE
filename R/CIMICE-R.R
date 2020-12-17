@@ -34,5 +34,6 @@
 #' @importFrom stats cor
 #' @importFrom utils read.csv
 #' @importFrom relations transitive_reduction endorelation
+#' @importFrom rly lex yacc
 #'
 NULL
