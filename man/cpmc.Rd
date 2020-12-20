@@ -38,6 +38,8 @@ the computed plot
 number of nodes of this cpmc
 
 TRUE if all tests are passed
+
+a PRISM formatted string representing this cpmc
 }
 \description{
 get node id (index in P) form label
@@ -57,6 +59,8 @@ plot this cpmc
 retrieve number of nodes of this cpmc
 
 check if this is a valid cpmc
+
+format this cpmc as a PRISM model
 }
 \details{
 This representation is also well fit to encode any type of

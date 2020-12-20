@@ -8,8 +8,11 @@ cpmc.prune(D, id = 0, label = NULL)
 }
 \arguments{
 \item{D}{a cpmc}
+
+\item{id}{id of the source}
+
+\item{label}{label of the source (alternatively)}
 }
 \description{
-This procedure normalizes exiting probabilities for each node of this
-cpmc. Nothing is done for a node if the sum of these probabilities is 0.
+This procedure removes nodes not reachable form a source
 }

@@ -25,3 +25,14 @@ secondDrug {
     [ccc] kill 0.2;
 }
 
+simpleTest{
+    [D] mutate [-D,B] 0.5;
+    [A] kill 0.5;
+    [A & D] kill 1;
+}
+
+simpleTest2{
+    [D] mutate [-D,B] 0.5;
+    [A] kill 0.5;
+    [A & D] kill 0.1;
+}

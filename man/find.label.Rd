@@ -19,6 +19,7 @@ Check if the given label is yet in use given a label and a list of labels
 in which to search. Return the first index that matches.
 }
 \examples{
+require(purrr)
 a <- c("A","B","C")
 b <- c("A","B","C")
 c <- c("A","B","D")
