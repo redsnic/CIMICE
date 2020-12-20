@@ -48,13 +48,18 @@ cpmc <- setRefClass("cpmc",
                 #' @param p transition probability
                 #' @param normalize set TRUE if the remaining probabilities
                 #'        of exiting from the source must be normalized
-                set.edge = function(source , destination, p, normalize=TRUE){
-                    if(normalize){
-                        remainings <- sum(P[source,]) - p
-                        for(j in 1:ncol(P))
-                            P[source, j] <<- P[source, j]*remainings
+                set.edge = function(source, destination, p, normalize=TRUE){
+                    if(p > 0){
+                        if(normalize){
+                            remainings <- max(c(0, 1 - p))
+                            total <- sum(P[source,]) - P[source,destination]
+                            if(total > 0){
+                                for(j in 1:ncol(P))
+                                    P[source, j] <<- (P[source, j]/total)*remainings
+                            }
+                        }
+                        P[source,destination] <<- p
                     }
-                    P[source,destination] <<- p
                 },
                 #' @description
                 #' add a node to this cpmc
@@ -71,7 +76,7 @@ cpmc <- setRefClass("cpmc",
                     }
                     P <<- cbind(P, rep(0, nrow(P)))
                     P <<- rbind(P, rep(0, ncol(P)))
-                    labels <<- c(labels, label)
+                    labels <<- c(labels, list(label) )
                     return(TRUE)
                 },
                 #' @description
@@ -151,8 +156,184 @@ cpmc <- setRefClass("cpmc",
                         }
                     }
                     ok
+                },
+                #' @description
+                #' format this cpmc as a PRISM model
+                #' @return a PRISM formatted string representing this cpmc
+                to.prism = function(name, initial=NULL, initial_state_description = 0){
+                    if(!.self$check()){
+                        return(NULL)
+                    }
+                    # get initial state automatically if not specified
+                    if(is.null(initial)){
+                        initial <- .self$get.id("Clonal")
+                        if(initial == 0){
+                            initial <- 1
+                        }
+                    }
+                    # auto-compute if initial_state_description is not defined
+                    if(length(initial_state_description) == 1 && initial_state_description[1] == 0){
+                        initial_state_description <- find.occ(c("Clonal"), all_labels <- labels %>% unlist() %>% unique())
+                    }else{
+                        initial_state_description <- find.occ(initial_state_description, all_labels <- labels %>% unlist() %>% unique())
+                    }
+
+                    lable.table <- make.label.table(.self$labels)
+                    str <- paste(
+                        "dtmc", paste("module ", name), paste("\tx : [1..", .self$size() ,"] init ", initial, ";", sep=""),
+                        paste(labels_to_prism_properties(lable.table, initial_state_description), collapse = "\n"),
+                        paste(format_transition_probabilities_with_labels(.self$P, lable.table), collapse = "\n"),
+                        "endmodule",
+                        sep="\n"
+                    )
+                    str
                 }
             ))
+
+
+#' Prepare PRISM header
+#'
+#' Prepare PRISM header by defining state variable and lable variables.
+#'
+#' @param lable.table matrix of the characteristic functions of the labels
+#' @param initial_state_description list of labels that are true in the initial state
+#' TODO: the initial state label could be retrieved directly by the labels of the cpmc
+#' @return translated value
+labels_to_prism_properties <- function(lable.table, initial_state_description){
+    out <- c()
+    for(i in 1:ncol(lable.table)){
+        out <- c(out, paste("\t_", colnames(lable.table)[i], " : bool init ", bool.prism.translate(initial_state_description[i]) ,";", sep=""))
+    }
+    out
+}
+
+#' Boolean to PRISM Boolean
+#'
+#' Convert Boolean values in PRISM language
+#'
+#' @param  b boolean value
+#' @return translated value
+bool.prism.translate <- function(b){
+    if(b){
+        "true"
+    }else{
+        "false"
+    }
+}
+
+#' Format transitions in prism language
+#'
+#' Format transitions in the prism language. Also manages property labels.
+#'
+#' @param P transition probability matrix
+#' @param lable.table matrix of the characteristic function of labels
+#' @return transitions in prism language
+#'
+#' @examples
+#' cimice.out <- quick.run(example.dataset())
+#' DTMC <- to.cpmc(cimice.out$topology, cimice.out$weights, cimice.out$labels)
+#' lt <- make.label.table(DTMC$labels)
+#' format_next_state(1,lt)
+#'
+#' @export format_transition_probabilities_with_labels
+format_transition_probabilities_with_labels <- function(P , lable.table){
+    out <- rep("", ncol(P))
+    for(i in 1:nrow(P)){
+        first <- TRUE
+        for(j in 1:ncol(P)){
+            if(P[i,j] != 0){
+                if(first){
+                    out[i] <- paste("\t[] x=", i, " -> ", P[i,j], ":(x'=", j, ")", format_next_state(j,lable.table),sep="")
+                    first <- FALSE
+                }else{
+                    out[i] <- paste(out[i], "\n\t\t+ ", P[i,j], ":(x'=", j, ")", format_next_state(j,lable.table), sep="")
+                }
+            }
+        }
+        out[i] <- paste(out[i], ";", sep="")
+    }
+    out
+}
+
+#' Format labels in prism language
+#'
+#' Format property labels in the prism language. Labels are represented
+#' by Boolean values, in the contest of tumor philogenetics, they represent
+#' genotypes. Labels are updated by the transitions.
+#'
+#' @param dest_id destination node to be considered
+#' @param lable.table matrix of the characteristic function of labels
+#' @return transition labels in prism language
+#'
+#' @examples
+#' cimice.out <- quick.run(example.dataset())
+#' DTMC <- to.cpmc(cimice.out$topology, cimice.out$weights, cimice.out$labels)
+#' lt <- make.label.table(DTMC$labels)
+#' format_next_state(1,lt)
+#'
+#' @export format_next_state
+format_next_state <- function(dest_id, label.table){
+    out <- c()
+    for(j in 1:ncol(label.table)){
+        out <- c(out, paste(" & (", "_", colnames(label.table)[j],"'=", bool.prism.translate(label.table[dest_id, j]) ,")",sep=""))
+    }
+    paste(out, collapse = "")
+}
+
+#' Create table of the labels
+#'
+#' Translate labels to a matrix of characteristic functions. The
+#' characteristic functions follow the ascending order of sorted labels.
+#'
+#' @param labels set of labels
+#' @return matrix of characteristic functions
+#'
+#' @examples
+#' l <- list(c("A","B"), list("C"), list("F", "D"))
+#' make.label.table(l)
+#'
+#' @export make.label.table
+make.label.table <- function(labels){
+    all_labels <- labels %>% unlist() %>% unique()
+    match.mat <- NULL
+    for(l in labels){
+        match.mat <- rbind(match.mat, find.occ(l,all_labels))
+    }
+    match.mat
+}
+
+#' Find occurrences
+#'
+#' Prepares a Boolean array representing the characteristic function
+#' of a subset. 'some' and 'all' must be sortable. The order of the elements
+#' in the output array follow the sorted order of the universe set 'all'
+#'
+#' @param some subset
+#' @param all universe set
+#' @return an array representing the characteristic function of a subset of 'all'
+#'
+#' @examples
+#' a <- c("A","B","D")
+#' b <- c("A","B","C", "F", "D")
+#' find.occ(a,b)
+#'
+#' @export find.occ
+find.occ <- function(some, all){
+    some <- sort(some)
+    all <- sort(all)
+    i <- 1
+    j <- 1
+    is.match <- rep(FALSE, length(all))
+    while( i <= length(some) && j <= length(all)){
+        if(some[i] == all[j]){
+            is.match[j]<-TRUE
+            i <- i+1
+        }
+        j<-j+1
+    }
+    names(is.match) <- all
+    is.match
+}
 
 #' Check if character arrays are equal
 #'
@@ -216,6 +397,7 @@ is.not.unique.label <- function(label, labels){
 #' @return the first index for which labels matches. 0 if there is none.
 #'
 #' @examples
+#' require(purrr)
 #' a <- c("A","B","C")
 #' b <- c("A","B","C")
 #' c <- c("A","B","D")
@@ -367,11 +549,13 @@ cpmc.apply.on.visit <- function(D, procedure, id=0, label=NULL){
 
 #' Prune cpmc
 #'
-#' This procedure normalizes exiting probabilities for each node of this
-#' cpmc. Nothing is done for a node if the sum of these probabilities is 0.
+#' This procedure removes nodes not reachable form a source
 #'
 #' @param D a cpmc
-#' @export cpmc.normalize
+#' @param id id of the source
+#' @param label label of the source (alternatively)
+#'
+#' @export cpmc.prune
 cpmc.prune <- function(D, id=0, label=NULL){
     simple.visit <- function(input){
         input$was.visited[input$current] <- TRUE
@@ -379,7 +563,8 @@ cpmc.prune <- function(D, id=0, label=NULL){
     }
     out <- cpmc.apply.on.visit(D, simple.visit, id=id, label=label)
     rem <- which(map_lgl(out, ~ !.))
-    walk(rem, ~ D$remove.node(id = .))
+    # very important to remove nodes in dec order!
+    walk(sort(rem, decreasing = TRUE), ~ D$remove.node(id = .))
 }
 
 #------ TODO --------
@@ -387,6 +572,7 @@ cpmc.prune <- function(D, id=0, label=NULL){
 #' Apply treatment effects
 #'
 #' This (experimental) procedure applies treatment effects
+#' (sequential)
 #'
 #' @param D a cpmc
 #' @param treatment treatment name
@@ -405,7 +591,7 @@ cpmc.apply.treatment <- function(D, treatment, treatments){
     if(is.null(found)){
         return(FALSE)
     }
-    print(found)
+
     # check effects
     for(effect in found$rules){
         apply.treatment <- NULL
@@ -425,7 +611,14 @@ cpmc.apply.treatment <- function(D, treatment, treatments){
 
                     # add arc to sink
                     if(effect$guard(D$labels[[i]])){
-                        D$set.edge(i,sink,effect$eff)
+                        # new edge
+                        if(D$P[i,sink] == 0){
+                            D$set.edge(i,sink,effect$eff)
+                        }else{
+                            D$set.edge(i,sink,
+                                # p + q - pq
+                                effect$eff + D$P[i,sink] - (effect$eff * D$P[i,sink]))
+                        }
                     }
 
                     input$was.visited[i] <- TRUE
@@ -435,8 +628,46 @@ cpmc.apply.treatment <- function(D, treatment, treatments){
             apply.treatment <- apply.treatment(effect)
 
         }else if(effect$action == "mutate"){
-            print(paste("ERROR: mode not implemented:", effect$action))
-            return(FALSE)
+            apply.treatment <- function(effect){
+                force(effect)
+                function(input){
+                    i <- input$current
+                    if(effect$guard(D$labels[[i]])){
+                        # compute new label
+                        l <- unlist(setdiff(union(D$labels[[i]], effect$changes$add), effect$changes$remove))
+
+                        # add new node
+                        if(D$get.id(l) == 0){
+                            # manage "clonal" case TODO make it more general
+                            if(is.null(l)){
+                                l <- c("Clonal")
+                            }
+                            D$add.node(l)
+                            dest <- D$get.id(l)
+                            if(sum(D$P[dest,]) == 0){
+                                D$set.edge(dest, dest, 1, normalize = F)
+                            }
+                            input$was.visited <- c(input$was.visited, FALSE)
+                        }
+                        dest <- D$get.id(l)
+
+                        # add arc to dest
+                        if(D$P[i,dest] == 0){
+                            D$set.edge(i,dest,effect$eff)
+                        }else{
+                            D$set.edge(i,dest,
+                                       # p + q - pq
+                                       effect$eff + D$P[i,dest] - (effect$eff * D$P[i,dest]))
+                        }
+
+                    }
+
+                    input$was.visited[i] <- TRUE
+                    list(was.visited = input$was.visited, current=i+1)
+                }
+            }
+            apply.treatment <- apply.treatment(effect)
+
         }else{
             print(paste("ERROR: mode not implemented:", effect$action))
             return(FALSE)

@@ -225,6 +225,40 @@ to.prism <- function(g, W, labels){
     str
 }
 
+#' to cpmc object
+#'
+#' convert this graph to a cpmc object
+#'
+#' @param g graph to be drawn
+#' @param W weights on edges
+#' @param labels node labels
+#'
+#' @return a cpmc object
+#'
+#' @examples
+#' require(dplyr)
+#' require(purrr)
+#' require(igraph)
+#' preproc <- example.dataset() %>% dataset.preprocessing
+#' samples <- preproc[["samples"]]
+#' freqs   <- preproc[["freqs"]]
+#' labels  <- preproc[["labels"]]
+#' genes   <- preproc[["genes"]]
+#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' W <- compute.weights.default(g, freqs)
+#' to.cpmc(g,W,labels)
+#'
+#' @export to.cpmc
+to.cpmc = function(g, W, labels){
+    V(g)$label <- labels
+    E(g)$label <- W
+    g_ <- set.edge.attribute(g, "weight", index=E(g), W)
+    W_ <- as_adjacency_matrix(g_, attr = "weight",sparse = F)
+    W_ <- add.self.loops(W_)
+    labels <- map(labels, ~ strsplit(., ", ", fixed="TRUE")[[1]])
+    cpmc(P = W_, labels = labels)
+}
+
 #' format transition probabilities
 #'
 #' convert a transition probability matrix into transitions written
