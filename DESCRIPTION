@@ -4,8 +4,11 @@ Title: CIMICE-R: (Markov) Chain Method to Inferr Cancer Evolution
 Version: 0.99.0
 Authors@R: 
     c(
-        person("Nicolò Rossi", "Mantainer", 
-            role=c("aut", "cre"), email="olocin.issor@gmail.com")
+        person("Nicolò Rossi", "",
+            role=c("aut", "cre"), email="olocin.issor@gmail.com",
+            comment = c(ORCID = "0000-0002-6353-7396")),
+        person("Carla Piazza", "",
+            role=c("aut"), email="carla.piazza@uniud.it")
     )
 Description: 
     CIMICE is a tool in the field of tumor phylogenetics and
