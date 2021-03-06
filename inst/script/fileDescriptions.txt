@@ -1,0 +1,3 @@
+extdata file descriptions:
+
+* example.CAPRI: a mutational matrix in "CAPRI" format (1000 genes * 160 samples) used as an example
