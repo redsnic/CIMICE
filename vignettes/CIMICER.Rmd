@@ -325,7 +325,7 @@ g <- build.subset.graph(edges, labels)
 
 that can be (badly) plotted using basic igraph:
 
-```{r, echo=F, out.height="50%", out.width="50%"}
+```{r, echo=F, out.height="300px",dpi=300}
 V(g)$vertex.size <- rep(10, length(V(g)))
 plot(g, vertex.size=rep(55, length(V(g))))
 ```
