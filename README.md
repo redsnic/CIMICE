@@ -10,22 +10,8 @@ See [this repository](https://github.com/redsnic/tumorEvolutionWithMarkovChains/
 ### Installation from GitHub:
 
 ```{R}
-# install BiocManager and Bioconductor core packages
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install()
-
-# additional dependencies
-deps <- c("knitr", "rmarkdown", "testthat", "webshot", "devtools")
-for(d in deps){
-    if(!require(d)){
-        install.packages(d)
-    }
-}
-BiocManager::install("BiocStyle")
-
 # install package
-devtools::install_github("redsnic/CIMICE", build_vignettes = TRUE)
+devtools::install_github("redsnic/CIMICE", build_vignettes = TRUE, dependencies = TRUE)
 library(CIMICE)
 
 # simple example
