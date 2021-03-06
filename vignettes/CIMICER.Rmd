@@ -1,10 +1,13 @@
 ---
 title: "CIMICE-R: (Markov) Chain Method to Infer Cancer Evolution"
 author: 
-    name: "Nicolò Rossi"
-    affiliation: "University of Udine"
-    email: "olocin.issor@gmail.com"
-date: "22/11/2020"
+    -   name: "Nicolò Rossi"
+        affiliation: "University of Udine"
+        email: "olocin.issor@gmail.com"
+    -   name: "Carla Piazza"
+        affiliation: "University of Udine"
+        email: "carla.piazza@uniud.it"
+date: "6/03/2021"
 geometry: margin=2cm
 output:
     BiocStyle::html_document:
@@ -21,7 +24,7 @@ BiocStyle::markdown()
 ```
 
 ```{r, echo=F}
-knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(echo = TRUE, fig.align = "left")
 ```
 
 ```{r, include = FALSE}
@@ -99,10 +102,10 @@ CIMICE requires a boolean dataframe as input, structured as follows:
 * Each row represents a sample (or a genotype)
 * Each 0/1 represents if a given gene is mutated in a given sample 
 
-It is possible to load this information from a file. The default input format for CIMICE is the "CAPRI/CAPRESE" format:
+It is possible to load this information from a file. The default input format for CIMICE is the "CAPRI/CAPRESE" `r Biocpkg("TRONCO")` format:
 
 * The file is a tab or space separated file
-* The first line starts whith the string "s\\g" (or any other word) followed by the list of genes (or loci) to be considered in the analysis
+* The first line starts with the string "s\\g" (or any other word) followed by the list of genes (or loci) to be considered in the analysis
 * Each subsequent line starts with a sample identifier string, followed by the bit set representing its genotype 
 
 This is a scheme of CIMICE's input format:
