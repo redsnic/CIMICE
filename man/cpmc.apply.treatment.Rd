@@ -15,4 +15,5 @@ cpmc.apply.treatment(D, treatment, treatments)
 }
 \description{
 This (experimental) procedure applies treatment effects
+(sequential)
 }

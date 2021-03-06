@@ -563,7 +563,7 @@ cpmc.prune <- function(D, id=0, label=NULL){
     }
     out <- cpmc.apply.on.visit(D, simple.visit, id=id, label=label)
     rem <- which(map_lgl(out, ~ !.))
-    # very important to remove nodes in dec order!
+    # very important to remove nodes in descending order!
     walk(sort(rem, decreasing = TRUE), ~ D$remove.node(id = .))
 }
 
@@ -577,7 +577,7 @@ cpmc.prune <- function(D, id=0, label=NULL){
 #' @param D a cpmc
 #' @param treatment treatment name
 #' @param treatments list of all treatment (as extracted by the lexer-parser)
-#' @export cpmc.normalize
+#' @export cpmc.apply.treatment
 cpmc.apply.treatment <- function(D, treatment, treatments){
 
     # find specific treatment
