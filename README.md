@@ -20,6 +20,8 @@ quick.run(example.dataset())
 browseVignettes("CIMICE")
 ```
 
+remember to install [**pandoc**](https://pandoc.org/installing.html) to build the vignettes. 
+
 ### Input Formats:
 
 #### CAPRI format
