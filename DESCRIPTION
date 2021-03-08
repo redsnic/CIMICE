@@ -6,9 +6,7 @@ Authors@R:
     c(
         person("Nicolò Rossi", "",
             role=c("aut", "cre"), email="olocin.issor@gmail.com",
-            comment = c(ORCID = "0000-0002-6353-7396")),
-        person("Carla Piazza", "",
-            role=c("aut"), email="carla.piazza@uniud.it")
+            comment = c("Lab. of Computational Biology and Bioinformatics, Department of Mathematics, Computer Science and Physics, University of Udine",ORCID = "0000-0002-6353-7396"))
     )
 Description: 
     CIMICE is a tool in the field of tumor phylogenetics and
