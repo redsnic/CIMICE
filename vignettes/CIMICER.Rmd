@@ -2,12 +2,9 @@
 title: "CIMICE-R: (Markov) Chain Method to Infer Cancer Evolution"
 author: 
     -   name: "Nicolò Rossi"
-        affiliation: "University of Udine"
+        affiliation: "Lab. of Computational Biology and Bioinformatics, Department of Mathematics, Computer Science and Physics, University of Udine"
         email: "olocin.issor@gmail.com"
-    -   name: "Carla Piazza"
-        affiliation: "University of Udine"
-        email: "carla.piazza@uniud.it"
-date: "6/03/2021"
+date: "8/03/2021"
 geometry: margin=2cm
 output:
     BiocStyle::html_document:
