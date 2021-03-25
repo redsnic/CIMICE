@@ -19,16 +19,16 @@ weight.env$downWeights <- NULL
 #' @examples
 #' require(dplyr)
 #' require(igraph)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' g <- graph_non_transitive_subset_topology(samples, labels)
 #' # prepare adj matrix
 #' A <- as.matrix(as_adj(g))
 #' # pre-compute exiting edges from each node
-#' no.of.children <- get.no.of.children(A,g)
+#' no.of.children <- get_no_of_children(A,g)
 #' computeUPW(g, freqs, no.of.children, A)
 #'
 #' @export computeUPW
@@ -36,7 +36,7 @@ computeUPW <- function(g, freqs, no.of.children, A){
     # create data structure for Dynamic Programming
     weight.env$upWeights <- seq(-1, -1, length.out = length(E(g)))
     weight.env$upWeights <- map_dbl( seq(1,length(E(g))), function(x)
-        computeUPW.aux(g, x, freqs, no.of.children, A) )
+        computeUPW_aux(g, x, freqs, no.of.children, A) )
     weight.env$upWeights
 }
 
@@ -54,7 +54,7 @@ computeUPW <- function(g, freqs, no.of.children, A){
 #'
 #' @return a vector containing the Up weights for each edge
 #'
-computeUPW.aux = function(g, edge, freqs, no.of.children, A) {
+computeUPW_aux = function(g, edge, freqs, no.of.children, A) {
     # check if this recursion was already computed
     if (weight.env$upWeights[edge] != -1) return(weight.env$upWeights[edge])
     # get source and destination of the currently considered edge
@@ -79,7 +79,7 @@ computeUPW.aux = function(g, edge, freqs, no.of.children, A) {
         # recurr
         W <- sum(map_dbl(edges.entering.in.source ,
                         function (x)
-                            computeUPW.aux(g, x, freqs, no.of.children, A)))
+                            computeUPW_aux(g, x, freqs, no.of.children, A)))
     }
     # compute formula
     weight.env$upWeights[edge] <- (1/D) * (P+W)
@@ -103,16 +103,16 @@ computeUPW.aux = function(g, edge, freqs, no.of.children, A) {
 #' @examples
 #' require(dplyr)
 #' require(igraph)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' g <- graph_non_transitive_subset_topology(samples, labels)
 #' # prepare adj matrix
 #' A <- as.matrix(as_adj(g))
 #' # pre-compute exiting edges from each node
-#' no.of.children <- get.no.of.children(A,g)
+#' no.of.children <- get_no_of_children(A,g)
 #' upWeights <- computeUPW(g, freqs, no.of.children, A)
 #' normalizeUPW(g, freqs, no.of.children, A, upWeights)
 #'
@@ -159,16 +159,16 @@ normalizeUPW <- function(g, freqs, no.of.children, A, upWeights) {
 #' @examples
 #' require(dplyr)
 #' require(igraph)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' g <- graph_non_transitive_subset_topology(samples, labels)
 #' # prepare adj matrix
 #' A <- as.matrix(as_adj(g))
 #' # pre-compute exiting edges from each node
-#' no.of.children <- get.no.of.children(A,g)
+#' no.of.children <- get_no_of_children(A,g)
 #' upWeights <- computeUPW(g, freqs, no.of.children, A)
 #' normUpWeights <- normalizeUPW(g, freqs, no.of.children, A, upWeights)
 #' computeDWNW(g, freqs, no.of.children, A, normUpWeights)
@@ -178,11 +178,11 @@ computeDWNW <- function(g, freqs, no.of.children, A, normUpWeights){
     # create Dynamic Programming data structure
     weight.env$downWeights <- seq(-1, -1, length.out = length(E(g)))
     weight.env$downWeights <- map_dbl( seq(1,length(E(g))) , function(x)
-        computeDWNW.aux(g, x, freqs, no.of.children, A, normUpWeights) )
+        computeDWNW_aux(g, x, freqs, no.of.children, A, normUpWeights) )
     weight.env$downWeights
 }
 
-#' Up weights computation (aux)
+#' Down weights computation (aux)
 #'
 #' Computes the Down weights formula using
 #' a Dinamic Programming approach (recursion),
@@ -197,7 +197,7 @@ computeDWNW <- function(g, freqs, no.of.children, A, normUpWeights){
 #'
 #' @return a vector containing the Up weights for each edge
 #'
-computeDWNW.aux = function(g, edge, freqs, no.of.children, A, normUpWeights) {
+computeDWNW_aux = function(g, edge, freqs, no.of.children, A, normUpWeights) {
     # check if this recursion was already computed
     if (weight.env$downWeights[edge] > -1) return(weight.env$downWeights[edge])
     # get source and destination of the currently considered edge
@@ -218,7 +218,7 @@ computeDWNW.aux = function(g, edge, freqs, no.of.children, A, normUpWeights) {
         W <- sum(map_dbl(
             edges.exiting.destination ,
             function (x)
-                computeDWNW.aux(g, x, freqs, no.of.children, A, normUpWeights)))
+                computeDWNW_aux(g, x, freqs, no.of.children, A, normUpWeights)))
     }
     # compute formula
     weight.env$downWeights[edge] <- (UPW) * (P+W)
@@ -241,16 +241,16 @@ computeDWNW.aux = function(g, edge, freqs, no.of.children, A, normUpWeights) {
 #' @examples
 #' require(dplyr)
 #' require(igraph)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' g <- graph_non_transitive_subset_topology(samples, labels)
 #' # prepare adj matrix
 #' A <- as.matrix(as_adj(g))
 #' # pre-compute exiting edges from each node
-#' no.of.children <- get.no.of.children(A,g)
+#' no.of.children <- get_no_of_children(A,g)
 #' upWeights <- computeUPW(g, freqs, no.of.children, A)
 #' normUpWeights <- normalizeUPW(g, freqs, no.of.children, A, upWeights)
 #' downWeights <- computeDWNW(g, freqs, no.of.children, A, normUpWeights)
