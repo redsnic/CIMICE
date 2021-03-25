@@ -16,7 +16,7 @@
 #' @docType package
 #' @name CIMICE
 #'
-#' @importFrom dplyr select enexprs select_if %>% ungroup
+#' @importFrom dplyr select enexprs select_if %>% ungroup summarise group_by_all n mutate_all
 #' @importFrom ggplot2 ggplot geom_histogram aes arrow unit labs
 #' @importFrom glue glue
 #' @importFrom tidyr drop_na
@@ -29,9 +29,9 @@
 #' @importFrom purrr map2 map_dbl imap_chr
 #' @importFrom ggraph ggraph geom_node_point geom_node_label
 #' @importFrom ggraph geom_edge_link label_rect
-#' @importFrom plyr count
 #' @importFrom stats cor
 #' @importFrom utils read.csv
 #' @importFrom relations transitive_reduction endorelation
+#' @importFrom maftools read.maf mutCountMatrix
 #'
 NULL
