@@ -1,5 +1,5 @@
 utils::globalVariables(c("node1.label", "node2.label"))
-#' Ggplot graph output
+#' ggplot graph output
 #'
 #' Draws the output graph using ggplot
 #'
@@ -12,17 +12,17 @@ utils::globalVariables(c("node1.label", "node2.label"))
 #'
 #' @examples
 #' require(dplyr)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' g <- graph.non.transitive.subset.topology(samples, labels)
-#' W <- compute.weights.default(g, freqs)
-#' draw.ggraph(g,W,labels,digit = 3)
+#' g <- graph_non_transitive_subset_topology(samples, labels)
+#' W <- compute_weights_default(g, freqs)
+#' draw_ggraph(g,W,labels,digit = 3)
 #'
-#' @export draw.ggraph
-draw.ggraph <- function(g, W, labels, digits = 4){
+#' @export draw_ggraph
+draw_ggraph <- function(g, W, labels, digits = 4){
     V(g)$label <- labels
 
     weights <- signif(W, digits = 4)
@@ -51,18 +51,17 @@ draw.ggraph <- function(g, W, labels, digits = 4){
 #'
 #' @examples
 #' require(dplyr)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' g <- graph.non.transitive.subset.topology(samples, labels)
-#' W <- compute.weights.default(g, freqs)
-#' draw.networkD3(g,W,labels)
+#' g <- graph_non_transitive_subset_topology(samples, labels)
+#' W <- compute_weights_default(g, freqs)
+#' draw_networkD3(g,W,labels)
 #'
-#' @export draw.networkD3
-draw.networkD3 <- function(g, W, labels){
-
+#' @export draw_networkD3
+draw_networkD3 <- function(g, W, labels){
     V(g)$label <- labels
     E(g)$label <- W
 
@@ -88,17 +87,17 @@ draw.networkD3 <- function(g, W, labels){
 #'
 #' @examples
 #' require(dplyr)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' g <- graph.non.transitive.subset.topology(samples, labels)
-#' W <- compute.weights.default(g, freqs)
-#' draw.visNetwork(g,W,labels)
+#' g <- graph_non_transitive_subset_topology(samples, labels)
+#' W <- compute_weights_default(g, freqs)
+#' draw_visNetwork(g,W,labels)
 #'
-#' @export draw.visNetwork
-draw.visNetwork <- function(g, W, labels){
+#' @export draw_visNetwork
+draw_visNetwork <- function(g, W, labels){
 
     V(g)$label <- labels
     E(g)$label <- W
@@ -155,17 +154,17 @@ draw.visNetwork <- function(g, W, labels){
 #' @examples
 #' require(dplyr)
 #' require(purrr)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' g <- graph.non.transitive.subset.topology(samples, labels)
-#' W <- compute.weights.default(g, freqs)
-#' to.dot(g,W,labels)
+#' g <- graph_non_transitive_subset_topology(samples, labels)
+#' W <- compute_weights_default(g, freqs)
+#' to_dot(g,W,labels)
 #'
-#' @export to.dot
-to.dot <- function(g, W, labels){
+#' @export to_dot
+to_dot <- function(g, W, labels){
 
     V(g)$label <- labels
     E(g)$label <- W
