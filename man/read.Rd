@@ -13,7 +13,7 @@ read(filename)
 the described mutational matrix as a dataframe
 }
 \description{
-Read a "CAPRI" formatted file, as read.CAPRI
+Read a "CAPRI" formatted file, as read_CAPRI
 }
 \examples{
 read(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
