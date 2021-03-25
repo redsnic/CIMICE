@@ -1,10 +1,10 @@
 Package: CIMICE
 Type: Package
 Title: CIMICE-R: (Markov) Chain Method to Inferr Cancer Evolution
-Version: 0.99.0
+Version: 0.99.1
 Authors@R: 
     c(
-        person("Nicolò Rossi", "",
+        person("Nicolò", "Rossi",
             role=c("aut", "cre"), email="olocin.issor@gmail.com",
             comment = c("Lab. of Computational Biology and Bioinformatics, Department of Mathematics, Computer Science and Physics, University of Udine",ORCID = "0000-0002-6353-7396"))
     )
@@ -30,10 +30,10 @@ Imports:
     ggcorrplot, 
     purrr,
     ggraph, 
-    plyr,
     stats,
     utils,
-    relations
+    relations,
+    maftools
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Suggests: 
@@ -43,17 +43,15 @@ Suggests:
     testthat,
     webshot
 biocViews: 
-    BiomedicalInformatics,
-    DataImport,
-    Phylogenetics,
-    GraphAndNetwork,
-    ImmunoOncology,
-    Network,
-    NetworkInference,
-    SingleCell,
     Software,
-    SomaticMutation, 
-    Preprocessing
+    BiologicalQuestion,
+    NetworkInference,
+    ResearchField,
+    Phylogenetics,
+    StatisticalMethod,
+    GraphAndNetwork,
+    Technology,
+    SingleCell
 BugReports: https://github.com/redsnic/CIMICE/issues
 URL: https://github.com/redsnic/CIMICE
 BiocType: Software
