@@ -24,16 +24,16 @@ In this short tutorial it is shown how to execute CIMICE's analysis
 
 ### Read input
 
-To load the input use `CIMICE::read` family functions or the pair `CIMICE::make.dataset`, `CIMICE::update_df` in the following manner: 
+To load the input use `CIMICE::read` family functions or the pair `CIMICE::make_dataset`, `CIMICE::update_df` in the following manner: 
 
 ```{r cars}
 # read from file
-head(read.CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE)))
+head(read_CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE)))
 ```
 
 ```{r}
 # from a string
-read.CAPRI.string("
+read_CAPRI_string("
 s\\g A B C D
 S1 0 0 0 1
 S2 1 0 0 0
@@ -47,9 +47,9 @@ S8 1 1 0 1
 ```
 
 ```{r}
-# using CIMICE::make.dataset and CIMICE::update_df
+# using CIMICE::make_dataset and CIMICE::update_df
 # genes
-make.dataset(A,B,C,D) %>% 
+make_dataset(A,B,C,D) %>% 
     # samples
     update_df("S1", 0, 0, 0, 1) %>%
     update_df("S2", 1, 0, 0, 0) %>%
@@ -61,14 +61,14 @@ make.dataset(A,B,C,D) %>%
     update_df("S8", 1, 1, 0, 1)
 ```
 
-This last dataset will be use in this example, under the name of `example.dataset()`. Input dataset analysis and feature selection should be done at this point.
+This last dataset will be use in this example, under the name of `example_dataset()`. Input dataset analysis and feature selection should be done at this point.
 
 ## Preprocess dataset
 
 This early phase reorganizes the dataset to simplify further analysis.
 
 ```{r}
-preproc <- dataset.preprocessing(example.dataset())
+preproc <- dataset_preprocessing(example_dataset())
 samples <- preproc[["samples"]]
 freqs   <- preproc[["freqs"]]
 labels  <- preproc[["labels"]]
@@ -80,7 +80,7 @@ genes   <- preproc[["genes"]]
 The default method to organize genotypes in a graph in CIMICE is based on the "subset" relation among them.
 
 ```{r}
-g <- graph.non.transitive.subset.topology(samples,labels)
+g <- graph_non_transitive_subset_topology(samples,labels)
 ```
 
 ```{r, echo=FALSE}
@@ -94,7 +94,7 @@ CIMICE provides a strategy to estimate transition probabilities among genotypes.
 in this way:
 
 ```{r}
-W <- compute.weights.default(g, freqs)
+W <- compute_weights_default(g, freqs)
 ```
 
 ## Visualize output:
@@ -102,16 +102,16 @@ W <- compute.weights.default(g, freqs)
 CIMICE supports many different output options, the reccomended one is based on "visNetwork".
 
 ```{r}
-draw.visNetwork(g, W, labels)
+draw_visNetwork(g, W, labels)
 ```
 
 ## Quick run
 
-To quickly run CIMICE in its default settings, use `CIMICE::quick.run`
+To quickly run CIMICE in its default settings, use `CIMICE::quick_run`
 
 ```{r}
-ans <- quick.run(example.dataset())
-draw.visNetwork(ans$topology, ans$weights, ans$labels)
+ans <- quick_run(example_dataset())
+draw_visNetwork(ans$topology, ans$weights, ans$labels)
 ```
 
 
