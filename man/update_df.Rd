@@ -23,7 +23,7 @@ This procedure is meant to be used with the "%>%" operator
 \examples{
 
 require(dplyr)
-make.dataset(APC,P53,KRAS)   \%>\%
+make_dataset(APC,P53,KRAS)   \%>\%
     update_df("S1", 1, 0, 1) \%>\%
     update_df("S2", 1, 1, 1)
 
