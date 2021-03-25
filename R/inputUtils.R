@@ -1,5 +1,28 @@
 utils::globalVariables(c("sums","Samples"))
 
+#' Create mutational matrix from MAF file
+#' 
+#' Read a MAF (Mutation Annotation Format) file and create
+#' a Mutational Matrix combining gene and sample IDs.
+#' 
+#' @param path path to MAF file
+#' @param ... other maftools::mutCountMatrix arguments
+#' 
+#' @return the mutational matrix associated to the MAF file
+#' 
+#' @examples 
+#' read_MAF(system.file("extdata", "paac_jhu_2014_500.maf", package = "CIMICE", mustWork = TRUE))
+#'   
+#' @export read_MAF
+read_MAF <- function(path, ...){
+    maf <- read.maf(maf = path)
+    # extract mutational matrix
+    mat <- maf %>% mutCountMatrix(...) %>% t %>% as.data.frame
+    # make boolean
+    mat <- mat %>% mutate_all(~ifelse(.>0,1,0))
+    mat
+} 
+
 #' Read "CAPRI" file from a string
 #'
 #' Read a "CAPRI" formatted file, from a text string
@@ -9,7 +32,7 @@ utils::globalVariables(c("sums","Samples"))
 #' @return the described mutational matrix as a dataframe
 #'
 #' @examples
-#' read.CAPRI.string("
+#' read_CAPRI_string("
 #' s\\g A B C D
 #' S1 0 0 0 1
 #' S2 1 0 0 0
@@ -21,8 +44,8 @@ utils::globalVariables(c("sums","Samples"))
 #' S8 1 1 0 1
 #' ")
 #'
-#' @export read.CAPRI.string
-read.CAPRI.string <- function(txt){
+#' @export read_CAPRI_string
+read_CAPRI_string <- function(txt){
     df <- read.csv(text=txt, sep="", strip.white = TRUE, blank.lines.skip = TRUE, row.names = NULL)
     colnames(df)[1] = "Samples"
     # manage repeated rownames
@@ -46,10 +69,10 @@ read.CAPRI.string <- function(txt){
 #'
 #' @examples
 #' #          "pathToDataset/myDataset.CAPRI"
-#' read.CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
+#' read_CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
 #'
-#' @export read.CAPRI
-read.CAPRI <- function(filename){
+#' @export read_CAPRI
+read_CAPRI <- function(filename){
     df <- read.csv(filename, sep="", strip.white = TRUE, blank.lines.skip = TRUE, row.names = NULL)
     colnames(df)[1] = "Samples"
     # manage repeated rownames
@@ -65,7 +88,7 @@ read.CAPRI <- function(filename){
 
 #' Read a "CAPRI" file
 #'
-#' Read a "CAPRI" formatted file, as read.CAPRI
+#' Read a "CAPRI" formatted file, as read_CAPRI
 #'
 #' @param filename path to file
 #'
@@ -75,7 +98,7 @@ read.CAPRI <- function(filename){
 #' read(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
 #'
 #' @export read
-read <- read.CAPRI
+read <- read_CAPRI
 
 #' Dataset line by line construction: initialization
 #'
@@ -87,10 +110,10 @@ read <- read.CAPRI
 #' @return a mutational matrix without samples structured as dataframe
 #'
 #' @examples
-#' make.dataset(APC,P53,KRAS)
+#' make_dataset(APC,P53,KRAS)
 #'
-#' @export make.dataset
-make.dataset <- function(...){
+#' @export make_dataset
+make_dataset <- function(...){
     df <- data.frame(matrix(ncol = length(enexprs(...)), nrow = 0))
     colnames(df) <- enexprs(...)
     df
@@ -110,7 +133,7 @@ make.dataset <- function(...){
 #' @examples
 #'
 #' require(dplyr)
-#' make.dataset(APC,P53,KRAS)   %>%
+#' make_dataset(APC,P53,KRAS)   %>%
 #'     update_df("S1", 1, 0, 1) %>%
 #'     update_df("S2", 1, 1, 1)
 #'
@@ -133,12 +156,12 @@ update_df <- function(d, sampleName, ...){
 #' @param binwidth binwidth parameter for the histogram (as in ggplot)
 #'
 #' @examples
-#' gene.mutations.hist(example.dataset(), binwidth = 10)
+#' gene_mutations_hist(example_dataset(), binwidth = 10)
 #'
 #' @return the newly created histogram
 #'
-#' @export gene.mutations.hist
-gene.mutations.hist <- function(df, binwidth = 1){
+#' @export gene_mutations_hist
+gene_mutations_hist <- function(df, binwidth = 1){
     # transpose dataframe
     temp.df <- as.data.frame(t(df[,seq(1,nrow(t(df)))]))
     # compute number of alteration per gene
@@ -160,12 +183,12 @@ gene.mutations.hist <- function(df, binwidth = 1){
 #' @param binwidth binwidth parameter for the histogram (as in ggplot)
 #'
 #' @examples
-#' sample.mutations.hist(example.dataset(), binwidth = 10)
+#' sample_mutations_hist(example_dataset(), binwidth = 10)
 #'
 #' @return the newly created histogram
 #'
-#' @export sample.mutations.hist
-sample.mutations.hist <- function(df, binwidth = 1){
+#' @export sample_mutations_hist
+sample_mutations_hist <- function(df, binwidth = 1){
     temp.df <- df
     # compute number of alteration per sample
     temp.df$sums <- rowSums(temp.df[,seq(1,ncol(df))], na.rm = TRUE)
@@ -193,12 +216,12 @@ sample.mutations.hist <- function(df, binwidth = 1){
 #' @examples
 #'
 #' # keep information on the 100 most mutated genes
-#' select.genes.on.mutations(example.dataset(), 5)
+#' select_genes_on_mutations(example_dataset(), 5)
 #' # keep information on the 100 least mutated genes
-#' select.genes.on.mutations(example.dataset(), 5, desc = FALSE)
+#' select_genes_on_mutations(example_dataset(), 5, desc = FALSE)
 #'
-#' @export select.genes.on.mutations
-select.genes.on.mutations <- function(df, n, desc = TRUE){
+#' @export select_genes_on_mutations
+select_genes_on_mutations <- function(df, n, desc = TRUE){
     # transpose dataset to operate on genes
     temp.df <- as.data.frame(t(df))
     # sort by sum
@@ -230,15 +253,15 @@ select.genes.on.mutations <- function(df, n, desc = TRUE){
 #' @examples
 #' require(dplyr)
 #' # keep information on the 5 most mutated samples
-#' select.samples.on.mutations(example.dataset(), 5)
+#' select_samples_on_mutations(example_dataset(), 5)
 #' # keep information on the 5 least mutated samples
-#' select.samples.on.mutations(example.dataset(), 5, desc = FALSE)
+#' select_samples_on_mutations(example_dataset(), 5, desc = FALSE)
 #' # combine selections
-#' select.samples.on.mutations(example.dataset() , 5, desc = FALSE) %>%
-#'     select.genes.on.mutations(5)
+#' select_samples_on_mutations(example_dataset() , 5, desc = FALSE) %>%
+#'     select_genes_on_mutations(5)
 #'
-#' @export select.samples.on.mutations
-select.samples.on.mutations <- function(df, n, desc = TRUE){
+#' @export select_samples_on_mutations
+select_samples_on_mutations <- function(df, n, desc = TRUE){
     temp.df <- df
     # sort by sum
     temp.df$sums <- rowSums(temp.df[,2:ncol(temp.df)], na.rm = TRUE)
@@ -260,10 +283,10 @@ select.samples.on.mutations <- function(df, n, desc = TRUE){
 #' @return the computed correlation plot
 #'
 #' @examples
-#' corrplot.from.df(example.dataset())
+#' corrplot_from_df(example_dataset())
 #'
-#' @export corrplot.from.df
-corrplot.from.df <- function(df){
+#' @export corrplot_from_df
+corrplot_from_df <- function(df){
     # prepare correlation matrix
     corr <- round(cor(df), 1)
     corr[is.nan(corr)] <- 0
@@ -283,10 +306,10 @@ corrplot.from.df <- function(df){
 #' @return the computed correlation plot
 #'
 #' @examples
-#' corrplot.genes(example.dataset())
+#' corrplot_genes(example_dataset())
 #'
-#' @export corrplot.genes
-corrplot.genes <- corrplot.from.df
+#' @export corrplot_genes
+corrplot_genes <- corrplot_from_df
 
 #' Sample based correlation plot
 #'
@@ -298,15 +321,15 @@ corrplot.genes <- corrplot.from.df
 #' @return the computed correlation plot
 #'
 #' @examples
-#' corrplot.samples(example.dataset())
+#' corrplot_samples(example_dataset())
 #'
-#' @export corrplot.samples
-corrplot.samples <- function (df)
-    corrplot.from.df(as.data.frame(t(df)))
+#' @export corrplot_samples
+corrplot_samples <- function (df)
+    corrplot_from_df(as.data.frame(t(df)))
 
-#' Compact dataset rows with plyr
+#' Compact dataset rows 
 #'
-#' Use plyr library to count duplicate rows
+#' Count duplicate rows
 #' and compact the dataset (mutational). The column
 #' 'freq' will contain the counts for each row.
 #'
@@ -315,11 +338,11 @@ corrplot.samples <- function (df)
 #' @return the compacted dataset (mutational matrix)
 #'
 #' @examples
-#' compact.dataset.easy(example.dataset())
+#' compact_dataset_easy(example_dataset())
 #'
-#' @export compact.dataset.easy
-compact.dataset.easy <- function(dataset){
-    dataset %>% plyr::count( colnames(dataset) )
+#' @export compact_dataset_easy
+compact_dataset_easy <- function(dataset){
+    dataset %>% group_by_all() %>% summarise(freq=n()) 
 }
 
 #' Compute subset relation as edge list
@@ -334,15 +357,15 @@ compact.dataset.easy <- function(dataset){
 #'
 #' @examples
 #' require(dplyr)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' build.topology.subset(samples)
+#' build_topology_subset(samples)
 #'
-#' @export build.topology.subset
-build.topology.subset <- function(samples){
+#' @export build_topology_subset
+build_topology_subset <- function(samples){
     # computing subset relation
     edges = list()
     index = 1
@@ -365,26 +388,26 @@ build.topology.subset <- function(samples){
 
 #' Remove transitive edges and prepare graph
 #'
-#' Create a graph from the "build.topology.subset" edge list, so
+#' Create a graph from the "build_topology_subset" edge list, so
 #' that it respects the subset relation, omitting the transitive edges.
 #'
-#' @param edges edge list, built from "build.topology.subset"
+#' @param edges edge list, built from "build_topology_subset"
 #' @param labels list of node labels, to be paired with the graph
 #'
 #' @return a graph with the subset topology, omitting transitive edges
 #'
 #' @examples
 #' require(dplyr)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' edges <- build.topology.subset(samples)
-#' g <- build.subset.graph(edges, labels)
+#' edges <- build_topology_subset(samples)
+#' g <- build_subset_graph(edges, labels)
 #'
-#' @export build.subset.graph
-build.subset.graph <- function(edges, labels){
+#' @export build_subset_graph
+build_subset_graph <- function(edges, labels){
     # prepare the actual graph
     g = graph_from_edgelist(t(simplify2array(edges)))
     # remove transitive edges using transitive.reduction from the "nem" package
@@ -405,7 +428,7 @@ build.subset.graph <- function(edges, labels){
 #' representing its associated genotype.
 #'
 #' Note that after this procedure the user is
-#' expected also to run fix.clonal.genotype
+#' expected also to run fix_clonal_genotype
 #' to also add the clonal genortype to the
 #' mutational matrix if it is not present.
 #'
@@ -417,7 +440,7 @@ build.subset.graph <- function(edges, labels){
 #' @examples
 #' require(dplyr)
 #' # compact
-#' compactedDataset <- compact.dataset.easy(example.dataset())
+#' compactedDataset <- compact_dataset_easy(example_dataset())
 #' # remove frequencies column from the compacted dataset
 #' samples <- as.matrix(compactedDataset %>% select(-freq))
 #' # save genes' names
@@ -427,10 +450,10 @@ build.subset.graph <- function(edges, labels){
 #' freqs = freqs/sum(freqs)
 #' freqs = c(freqs,0)
 #' # prepare node labels listing the mutated genes for each node
-#' prepare.labels(samples, genes)
+#' prepare_labels(samples, genes)
 #'
-#' @export prepare.labels
-prepare.labels <- function(samples, genes){
+#' @export prepare_labels
+prepare_labels <- function(samples, genes){
     # prepare labels with the alterated genes accordingly to node's bit vector
     labels = apply(samples, MARGIN = 1, FUN = function(x) genes[x==1] )
     # concatenate the genes' names
@@ -458,7 +481,7 @@ prepare.labels <- function(samples, genes){
 #' @examples
 #' require(dplyr)
 #' # compact
-#' compactedDataset <- compact.dataset.easy(example.dataset())
+#' compactedDataset <- compact_dataset_easy(example_dataset())
 #' # remove frequencies column from the compacted dataset
 #' samples <- as.matrix(compactedDataset %>% select(-freq))
 #' # save genes' names
@@ -468,15 +491,15 @@ prepare.labels <- function(samples, genes){
 #' freqs = freqs/sum(freqs)
 #' freqs = c(freqs,0)
 #' # prepare node labels listing the mutated genes for each node
-#' labels <- prepare.labels(samples, genes)
+#' labels <- prepare_labels(samples, genes)
 #' # fix clonal
-#' fix <- fix.clonal.genotype(samples, freqs, labels)
+#' fix <- fix_clonal_genotype(samples, freqs, labels)
 #' samples = fix[["samples"]]
 #' freqs = fix[["freqs"]]
 #' labels = fix[["labels"]]
 #'
-#' @export fix.clonal.genotype
-fix.clonal.genotype <- function(samples, freqs, labels){
+#' @export fix_clonal_genotype
+fix_clonal_genotype <- function(samples, freqs, labels){
     # if no clonal genotype is found
     if (!(0 %in% apply(samples,MARGIN=1, sum))){
         # add a 0 frequency genotype without mutations to the mutational matrix
@@ -500,17 +523,17 @@ fix.clonal.genotype <- function(samples, freqs, labels){
 #' @examples
 #' require(dplyr)
 #' require(igraph)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' g <- graph.non.transitive.subset.topology(samples, labels)
+#' g <- graph_non_transitive_subset_topology(samples, labels)
 #' A <- as.matrix(as_adj(g))
-#' get.no.of.children(A, g)
+#' get_no_of_children(A, g)
 #'
-#' @export get.no.of.children
-get.no.of.children <- function(A,g){
+#' @export get_no_of_children
+get_no_of_children <- function(A,g){
     no.of.children <- numeric(length(V(g)))
     for( v in V(g) ){
         no.of.children[v] = sum(A[v,])
