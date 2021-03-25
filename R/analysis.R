@@ -7,11 +7,11 @@ utils::globalVariables(c("A","B","C","D","freq"))
 #' @return a simple mutational matrix
 #'
 #' @examples
-#' example.dataset()
+#' example_dataset()
 #'
-#' @export example.dataset
-example.dataset <- function(){
-    make.dataset(A,B,C,D) %>% # genes
+#' @export example_dataset
+example_dataset <- function(){
+    make_dataset(A,B,C,D) %>% # genes
         # samples
         update_df("S1", 0, 0, 0, 1) %>%
         update_df("S2", 1, 0, 0, 0) %>%
@@ -28,11 +28,11 @@ example.dataset <- function(){
 #' @return a simple mutational matrix
 #'
 #' @examples
-#' example.dataset.withFreqs()
+#' example_dataset_withFreqs()
 #'
-#' @export example.dataset.withFreqs
-example.dataset.withFreqs <- function(){
-    dataset <- make.dataset(A,B,C,D) %>% # genes
+#' @export example_dataset_withFreqs
+example_dataset_withFreqs <- function(){
+    dataset <- make_dataset(A,B,C,D) %>% # genes
         # samples
         update_df("G1", 0, 0, 0, 1) %>%
         update_df("G2", 1, 0, 0, 0) %>%
@@ -64,12 +64,12 @@ example.dataset.withFreqs <- function(){
 #'
 #' @examples
 #' require(dplyr)
-#' example.dataset() %>% dataset.preprocessing
+#' example_dataset() %>% dataset_preprocessing
 #'
-#' @export dataset.preprocessing
-dataset.preprocessing <- function(dataset){
+#' @export dataset_preprocessing
+dataset_preprocessing <- function(dataset){
     # compact
-    compactedDataset <- compact.dataset.easy(dataset)
+    compactedDataset <- compact_dataset_easy(dataset)
     # remove frequencies column from the compacted dataset
     samples <- as.matrix(compactedDataset %>% select(-freq))
     # save genes' names
@@ -79,9 +79,9 @@ dataset.preprocessing <- function(dataset){
     freqs = freqs/sum(freqs)
     freqs = c(freqs,0)
     # prepare node labels listing the mutated genes for each node
-    labels <- prepare.labels(samples, genes)
+    labels <- prepare_labels(samples, genes)
     # fix Colonal genotype absence, if needed
-    fix <- fix.clonal.genotype(samples, freqs, labels)
+    fix <- fix_clonal_genotype(samples, freqs, labels)
     samples = fix[["samples"]]
     freqs = fix[["freqs"]]
     labels = fix[["labels"]]
@@ -108,10 +108,10 @@ dataset.preprocessing <- function(dataset){
 #'
 #' @examples
 #' require(dplyr)
-#' example.dataset.withFreqs() %>% dataset.preprocessing.population
+#' example_dataset_withFreqs() %>% dataset_preprocessing_population
 #'
-#' @export dataset.preprocessing.population
-dataset.preprocessing.population <- function(dataset){
+#' @export dataset_preprocessing_population
+dataset_preprocessing_population <- function(dataset){
     # dataset is already compacted per hypothesys
     compactedDataset <- dataset
     # remove frequencies column from the compacted dataset
@@ -123,9 +123,9 @@ dataset.preprocessing.population <- function(dataset){
     freqs = freqs/sum(freqs)
     freqs = c(freqs,0)
     # prepare node labels listing the mutated genes for each node
-    labels <- prepare.labels(samples, genes)
+    labels <- prepare_labels(samples, genes)
     # fix Colonal genotype absence, if needed
-    fix <- fix.clonal.genotype(samples, freqs, labels)
+    fix <- fix_clonal_genotype(samples, freqs, labels)
     samples = fix[["samples"]]
     freqs = fix[["freqs"]]
     labels = fix[["labels"]]
@@ -148,18 +148,18 @@ dataset.preprocessing.population <- function(dataset){
 #'
 #' @examples
 #' require(dplyr)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' graph.non.transitive.subset.topology(samples, labels)
-#' @export graph.non.transitive.subset.topology
-graph.non.transitive.subset.topology <- function(samples, labels){
+#' graph_non_transitive_subset_topology(samples, labels)
+#' @export graph_non_transitive_subset_topology
+graph_non_transitive_subset_topology <- function(samples, labels){
     # compute edges based on subset relation
-    edges <- build.topology.subset(samples)
+    edges <- build_topology_subset(samples)
     # remove transitive edges and prepare igraph object
-    build.subset.graph(edges, labels)
+    build_subset_graph(edges, labels)
 }
 
 #' Compute default weights
@@ -175,20 +175,20 @@ graph.non.transitive.subset.topology <- function(samples, labels){
 #'
 #' @examples
 #' require(dplyr)
-#' preproc <- example.dataset() %>% dataset.preprocessing
+#' preproc <- example_dataset() %>% dataset_preprocessing
 #' samples <- preproc[["samples"]]
 #' freqs   <- preproc[["freqs"]]
 #' labels  <- preproc[["labels"]]
 #' genes   <- preproc[["genes"]]
-#' g <- graph.non.transitive.subset.topology(samples, labels)
-#' compute.weights.default(g, freqs)
+#' g <- graph_non_transitive_subset_topology(samples, labels)
+#' compute_weights_default(g, freqs)
 #'
-#' @export compute.weights.default
-compute.weights.default <- function(g, freqs){
+#' @export compute_weights_default
+compute_weights_default <- function(g, freqs){
     # prepare adj matrix
     A <- as.matrix(as_adj(g))
     # pre-compute exiting edges from each node
-    no.of.children <- get.no.of.children(A,g)
+    no.of.children <- get_no_of_children(A,g)
     # compute the four steps
     upWeights <- computeUPW(g, freqs, no.of.children, A)
     normUpWeights <- normalizeUPW(g, freqs, no.of.children, A, upWeights)
@@ -208,16 +208,16 @@ compute.weights.default <- function(g, freqs){
 #' structure `list(topology = g, weights = W, labels = labels)`
 #'
 #' @examples
-#' quick.run(example.dataset())
+#' quick_run(example_dataset())
 #'
-#' @export quick.run
-quick.run <- function(dataset, mode="CAPRI"){
+#' @export quick_run
+quick_run <- function(dataset, mode="CAPRI"){
     # preprocess
     preproc <- NULL
     if(mode == "CAPRI"){
-        preproc <- dataset.preprocessing(dataset)
+        preproc <- dataset_preprocessing(dataset)
     }else if(mode == "CAPRIpop"){
-        preproc <- dataset.preprocessing.population(dataset)
+        preproc <- dataset_preprocessing_population(dataset)
     }else{
         stop(paste("Unsupported input mode", mode, "use CAPRI o CAPRIpop"))
     }
@@ -225,7 +225,7 @@ quick.run <- function(dataset, mode="CAPRI"){
     freqs   <- preproc[["freqs"]]
     labels  <- preproc[["labels"]]
     genes   <- preproc[["genes"]]
-    g <- graph.non.transitive.subset.topology(samples,labels)
-    W <- compute.weights.default(g, freqs)
+    g <- graph_non_transitive_subset_topology(samples,labels)
+    W <- compute_weights_default(g, freqs)
     list(topology = g, weights = W, labels = labels)
 }
