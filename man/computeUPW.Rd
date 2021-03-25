@@ -26,16 +26,16 @@ see vignettes for further explaination.
 \examples{
 require(dplyr)
 require(igraph)
-preproc <- example.dataset() \%>\% dataset.preprocessing
+preproc <- example_dataset() \%>\% dataset_preprocessing
 samples <- preproc[["samples"]]
 freqs   <- preproc[["freqs"]]
 labels  <- preproc[["labels"]]
 genes   <- preproc[["genes"]]
-g <- graph.non.transitive.subset.topology(samples, labels)
+g <- graph_non_transitive_subset_topology(samples, labels)
 # prepare adj matrix
 A <- as.matrix(as_adj(g))
 # pre-compute exiting edges from each node
-no.of.children <- get.no.of.children(A,g)
+no.of.children <- get_no_of_children(A,g)
 computeUPW(g, freqs, no.of.children, A)
 
 }
