@@ -118,18 +118,18 @@ and this an example on how to load a dataset from the file system:
 
 ```{r, results = 'hide'}
 # Read input dataset in CAPRI/CAPRESE format
-dataset.big <- read.CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
+dataset.big <- read_CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
 ```
 ```{r, echo=F}
 dataset.big %>% show.df(6,6) 
 dataset.big %>% size.df()
 ```
 
-Another option is to define directly the dataframe in R. This is made easy by the functions `make.dataset` and `update_df`, used as follows:
+Another option is to define directly the dataframe in R. This is made easy by the functions `make_dataset` and `update_df`, used as follows:
 
 ```{r}
 # genes
-dataset <- make.dataset(A,B,C,D) %>%
+dataset <- make_dataset(A,B,C,D) %>%
     # samples
     update_df("S1", 0, 0, 0, 1) %>%
     update_df("S2", 1, 0, 0, 0) %>%
@@ -159,8 +159,8 @@ sample_m 1 1 ... 1 freq_sm
 
 where the `freq` column is mandatory and sample must not be repeated. Frequencies
 in the `freq` column will be automatically normalized. This format is meant
-to be used with the functions `quick.run(dataset, mode="CAPRIpop")` for the
-full analysis and `dataset.preprocessing.population(...)` for the preprocessing
+to be used with the functions `quick_run(dataset, mode="CAPRIpop")` for the
+full analysis and `dataset_preprocessing_population(...)` for the preprocessing
 stage only. The subsequent operations remain otherwise equal to those 
 of the default format.
 
@@ -171,13 +171,13 @@ This implementation of CIMICE includes simple functions to quickly analyze the d
 The following code displays an histogram showing the distribution of the number of mutations hitting a gene:
 
 ```{r}
-gene.mutations.hist(dataset.big)
+gene_mutations_hist(dataset.big)
 ```
 
 And this does the same but from the samples point of view:
 
 ```{r}
-sample.mutations.hist(dataset.big, binwidth = 10)
+sample_mutations_hist(dataset.big, binwidth = 10)
 ```
 
 ## Simple procedures of feature selection
@@ -191,10 +191,10 @@ mutated samples or genes.
 Keeps the first $n$ (=100) most mutated genes: 
 
 ```{r, results = 'hide'}
-select.genes.on.mutations(dataset.big, 100)
+select_genes_on_mutations(dataset.big, 100)
 ```
 ```{r, echo=FALSE}
-temp <- select.genes.on.mutations(dataset.big, 100)
+temp <- select_genes_on_mutations(dataset.big, 100)
 temp %>% show.df(6,6) 
 temp %>% size.df()
 ```
@@ -204,10 +204,10 @@ temp %>% size.df()
 Keeps the first $n$ (=100) least mutated samples: 
 
 ```{r, results = 'hide'}
-select.samples.on.mutations(dataset.big, 100, desc = FALSE)
+select_samples_on_mutations(dataset.big, 100, desc = FALSE)
 ```
 ```{r, echo=FALSE}
-temp <- select.samples.on.mutations(dataset.big, 100, desc = FALSE)
+temp <- select_samples_on_mutations(dataset.big, 100, desc = FALSE)
 temp %>% show.df(6,6) 
 temp %>% size.df()
 ```
@@ -217,10 +217,10 @@ temp %>% size.df()
 It is easy to combine these selections by using the pipe operator `%>%`:
 
 ```{r, results = 'hide'}
-select.samples.on.mutations(dataset.big , 100, desc = FALSE) %>% select.genes.on.mutations(100)
+select_samples_on_mutations(dataset.big , 100, desc = FALSE) %>% select_genes_on_mutations(100)
 ```
 ```{r, echo=FALSE}
-temp <- select.samples.on.mutations(dataset.big , 100, desc = FALSE) %>% select.genes.on.mutations(100)
+temp <- select_samples_on_mutations(dataset.big , 100, desc = FALSE) %>% select_genes_on_mutations(100)
 temp %>% show.df(6,6) 
 temp %>% size.df()
 ```
@@ -233,13 +233,13 @@ heatmap based on the correlation matrix. We can show these plots by using the fo
 gene mutations correlation:
 
 ```{r}
-corrplot.genes(dataset)
+corrplot_genes(dataset)
 ```
 
 sample mutations correlation:
 
 ```{r}
-corrplot.samples(dataset)
+corrplot_samples(dataset)
 ```
 
 ## Group equal genotypes
@@ -251,7 +251,7 @@ this step by changing the algorithm as long as its output is a dataframe contain
 
 ```{r}
 # groups and counts equal genotypes
-compactedDataset <- compact.dataset.easy(dataset)
+compactedDataset <- compact_dataset_easy(dataset)
 ```
 ```{r, echo=F}
 compactedDataset
@@ -295,9 +295,9 @@ Add "Clonal" genotype to the dataset (if not present) that will be used as DAG r
 
 ```{r}
 # prepare node labels listing the mutated genes for each node
-labels <- prepare.labels(samples, genes)
+labels <- prepare_labels(samples, genes)
 # fix Colonal genotype absence, if needed
-fix <- fix.clonal.genotype(samples, freqs, labels)
+fix <- fix_clonal_genotype(samples, freqs, labels)
 samples = fix[["samples"]]
 freqs = fix[["freqs"]]
 labels = fix[["labels"]]
@@ -310,14 +310,14 @@ Build the topology of the graph based on the "superset" relation:
 
 ```{r}
 # compute edges based on subset relation
-edges <- build.topology.subset(samples)
+edges <- build_topology_subset(samples)
 ```
 
 and finally prepare and show with the current topology of the graph:
 
 ```{r}
 # remove transitive edges and prepare igraph object
-g <- build.subset.graph(edges, labels)
+g <- build_subset_graph(edges, labels)
 ```
 
 that can be (badly) plotted using basic igraph:
@@ -344,7 +344,7 @@ A
 and on the number of successors for each node:
 
 ```{r}
-no.of.children <- get.no.of.children(A,g)
+no.of.children <- get_no_of_children(A,g)
 ```
 ```{r, echo=F}
 no.of.children
@@ -408,13 +408,13 @@ check the Quick Guide instead.
 This is the output based on `ggraph`, it is ideal for small graphs but, for legibility reasons, it is better not to use it with long labels.
 
 ```{r}
-draw.ggraph(g, normDownWeights, labels)
+draw_ggraph(g, normDownWeights, labels)
 ```
 
 The `networkD3` is a quite valid interactive approach, but it lacks the option to draw labels on edges, limiting the representation to thicker or thinner edges.
 
 ```{r, results = 'hide'}
-draw.networkD3(g, normDownWeights, labels)
+draw_networkD3(g, normDownWeights, labels)
 ```
 
 ```{r, echo=FALSE, out.width = "100%", out.height="100%"}
@@ -426,7 +426,7 @@ The `visNetwork` approach is overall the best for interactive purposes. It allow
 in particular with textboxes and the "hovering condition" for vertex and edges.
 
 ```{r, results = 'hide'}
-draw.visNetwork(g, normDownWeights, labels)
+draw_visNetwork(g, normDownWeights, labels)
 ```
 ```{r, echo=FALSE, out.width = "100%", out.height="100%"}
 knitr::include_graphics("visGraph.png")
@@ -436,7 +436,7 @@ Finally, it is also possible to export CIMICE's output to the standard [dot form
 for use in other visualization applications.
 
 ```{r}
-cat( to.dot(g, normDownWeights, labels) )
+cat( to_dot(g, normDownWeights, labels) )
 ```
 
 
