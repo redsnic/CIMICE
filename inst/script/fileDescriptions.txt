@@ -1,3 +1,14 @@
 extdata file descriptions:
 
 * example.CAPRI: a mutational matrix in "CAPRI" format (1000 genes * 160 samples) used as an example
+
+* paac_jhu_2014_500.maf: 500 lines randomly sampled of a pubblicly available MAF file (Acinar Cell Carcinoma of the Pancreas (JHU, J Pathol 2014) [not single cell data, here used just as an example]). This file can be downloaded from cBioPortal Data Set section.
+
+code:
+
+```
+$ head -1 data_mutations_extended.txt > header
+$ tail -n +2 data_mutations_extended.txt | shuf -n 500 > content
+$ cat header content > paac_jhu_2014_500.maf
+```
+
