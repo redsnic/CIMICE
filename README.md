@@ -15,7 +15,7 @@ devtools::install_github("redsnic/CIMICE", build_vignettes = TRUE, dependencies 
 library(CIMICE)
 
 # simple example
-quick.run(example.dataset())
+quick_run(example_dataset())
 # show guide
 browseVignettes("CIMICE")
 ```
