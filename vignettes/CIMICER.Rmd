@@ -164,6 +164,14 @@ full analysis and `dataset_preprocessing_population(...)` for the preprocessing
 stage only. The subsequent operations remain otherwise equal to those 
 of the default format.
 
+Another option is to compute a mutational matrix directly from a MAF file, which 
+can be done as follows:
+
+```{r}
+#        path to MAF file
+read_MAF(system.file("extdata", "paac_jhu_2014_500.maf", package = "CIMICE", mustWork = TRUE))[1:5,1:5]
+```
+
 # Preliminary check of mutations distributions
 
 This implementation of CIMICE includes simple functions to quickly analyze the distributions of mutations among genes and samples.
