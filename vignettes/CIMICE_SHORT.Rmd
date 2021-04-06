@@ -16,6 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(CIMICE)
 library(dplyr)
 library(igraph)
+library(Matrix)
+library(purrr)
 ```
 
 ## Reference for quick CIMICE analysis
@@ -26,9 +28,9 @@ In this short tutorial it is shown how to execute CIMICE's analysis
 
 To load the input use `CIMICE::read` family functions or the pair `CIMICE::make_dataset`, `CIMICE::update_df` in the following manner: 
 
-```{r cars}
+```{r cars, results=FALSE}
 # read from file
-head(read_CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE)))
+read_CAPRI(system.file("extdata", "example.CAPRI", package = "CIMICE", mustWork = TRUE))
 ```
 
 ```{r}
