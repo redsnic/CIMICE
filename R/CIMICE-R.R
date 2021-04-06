@@ -26,12 +26,14 @@
 #' @importFrom networkD3 igraph_to_networkD3 forceNetwork
 #' @importFrom visNetwork toVisNetworkData visNetwork
 #' @importFrom ggcorrplot ggcorrplot
-#' @importFrom purrr map2 map_dbl imap_chr
+#' @importFrom purrr map2 map_dbl imap_chr map map_chr map_int map2_chr
 #' @importFrom ggraph ggraph geom_node_point geom_node_label
 #' @importFrom ggraph geom_edge_link label_rect
 #' @importFrom stats cor
 #' @importFrom utils read.csv
 #' @importFrom relations transitive_reduction endorelation
 #' @importFrom maftools read.maf mutCountMatrix
+#' @importFrom assertthat are_equal
+#' @import Matrix
 #'
 NULL
