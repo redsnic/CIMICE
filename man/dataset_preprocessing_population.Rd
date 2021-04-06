@@ -4,10 +4,12 @@
 \alias{dataset_preprocessing_population}
 \title{Run CIMICE preprocessing for poulation format dataset}
 \usage{
-dataset_preprocessing_population(dataset)
+dataset_preprocessing_population(compactedDataset)
 }
 \arguments{
-\item{dataset}{a mutational matrix as a dataframe (with freq column)}
+\item{compactedDataset}{a list (matrix: a mutational matrix, 
+counts: number of samples with given genotype). 
+"counts" is normalized automatically.}
 }
 \value{
 a list containing the mutational matrix ("samples"),
