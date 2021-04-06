@@ -40,8 +40,8 @@ example_dataset_withFreqs <- function(){
         update_df("G4", 1, 1, 0, 1) %>%
         update_df("G5", 1, 0, 1, 1) %>%
         update_df("G6", 1, 1, 0, 1)
-    freq <- c(1,2,1,2,1,1)
-    dataset %>% cbind(freq)
+    counts <- c(1,2,1,2,1,1)
+    list(matrix = dataset, counts = counts)
 }
 
 #' Run CIMICE preprocessing
@@ -56,7 +56,7 @@ example_dataset_withFreqs <- function(){
 #'
 #' 3) labels are prepared
 #'
-#' @param dataset a mutational matrix as a dataframe
+#' @param dataset a mutational matrix as a (sparse) matrix
 #'
 #' @return a list containing the mutational matrix ("samples"),
 #' the mutational frequencies of the genotypes ("freqs"),
@@ -69,25 +69,9 @@ example_dataset_withFreqs <- function(){
 #' @export dataset_preprocessing
 dataset_preprocessing <- function(dataset){
     # compact
-    compactedDataset <- compact_dataset_easy(dataset)
-    # remove frequencies column from the compacted dataset
-    samples <- as.matrix(compactedDataset %>% select(-freq))
-    # save genes' names
-    genes = colnames(samples)
-    # keep the information on frequencies for further analysis
-    freqs = as.matrix(compactedDataset %>% ungroup() %>% select(freq))
-    freqs = freqs/sum(freqs)
-    freqs = c(freqs,0)
-    # prepare node labels listing the mutated genes for each node
-    labels <- prepare_labels(samples, genes)
-    # fix Colonal genotype absence, if needed
-    fix <- fix_clonal_genotype(samples, freqs, labels)
-    samples = fix[["samples"]]
-    freqs = fix[["freqs"]]
-    labels = fix[["labels"]]
-    # return a list with the prepared dataset and its additional information
-    list("samples" = samples, "freqs" = freqs,
-        "labels" = labels, "genes" = genes)
+    compactedDataset <- compact_dataset(dataset)
+    # run preprocessing on genotypes and frequencies
+    dataset_preprocessing_population(compactedDataset)
 }
 
 #' Run CIMICE preprocessing for poulation format dataset
@@ -100,7 +84,9 @@ dataset_preprocessing <- function(dataset){
 #'
 #' 2) labels are prepared
 #'
-#' @param dataset a mutational matrix as a dataframe (with freq column)
+#' @param compactedDataset a list (matrix: a mutational matrix, 
+#' counts: number of samples with given genotype). 
+#' "counts" is normalized automatically. 
 #'
 #' @return a list containing the mutational matrix ("samples"),
 #' the mutational frequencies of the genotypes ("freqs"),
@@ -111,24 +97,21 @@ dataset_preprocessing <- function(dataset){
 #' example_dataset_withFreqs() %>% dataset_preprocessing_population
 #'
 #' @export dataset_preprocessing_population
-dataset_preprocessing_population <- function(dataset){
-    # dataset is already compacted per hypothesys
-    compactedDataset <- dataset
-    # remove frequencies column from the compacted dataset
-    samples <- as.matrix(compactedDataset %>% select(-freq))
+dataset_preprocessing_population <- function(compactedDataset){
+    # dataset is already compacted by hypothesys
+    # prepare for the analysis
+    samples <- compactedDataset$matrix
     # save genes' names
-    genes = colnames(samples)
+    genes <- colnames(compactedDataset$matrix)
     # keep the information on frequencies for further analysis
-    freqs = as.matrix(compactedDataset %>% ungroup() %>% select(freq))
-    freqs = freqs/sum(freqs)
-    freqs = c(freqs,0)
+    freqs <- compactedDataset$counts/sum(compactedDataset$counts)
     # prepare node labels listing the mutated genes for each node
     labels <- prepare_labels(samples, genes)
     # fix Colonal genotype absence, if needed
     fix <- fix_clonal_genotype(samples, freqs, labels)
-    samples = fix[["samples"]]
-    freqs = fix[["freqs"]]
-    labels = fix[["labels"]]
+    samples <- fix[["samples"]]
+    freqs <- fix[["freqs"]]
+    labels <- fix[["labels"]]
     # return a list with the prepared dataset and its additional information
     list("samples" = samples, "freqs" = freqs,
         "labels" = labels, "genes" = genes)
@@ -186,7 +169,7 @@ graph_non_transitive_subset_topology <- function(samples, labels){
 #' @export compute_weights_default
 compute_weights_default <- function(g, freqs){
     # prepare adj matrix
-    A <- as.matrix(as_adj(g))
+    A <- as_adj(g)
     # pre-compute exiting edges from each node
     no.of.children <- get_no_of_children(A,g)
     # compute the four steps
