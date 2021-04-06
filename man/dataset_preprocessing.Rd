@@ -7,7 +7,7 @@
 dataset_preprocessing(dataset)
 }
 \arguments{
-\item{dataset}{a mutational matrix as a dataframe}
+\item{dataset}{a mutational matrix as a (sparse) matrix}
 }
 \value{
 a list containing the mutational matrix ("samples"),
