@@ -262,7 +262,7 @@ prepare_labels <- function(samples, genes){
 #' @export fix_clonal_genotype
 fix_clonal_genotype <- function(samples, freqs, labels){
     # if no clonal genotype is found
-    if (!(0 %in% apply(samples,MARGIN=1, sum))){
+    if (!(0 %in% rowSums(samples))){
         # add a 0 frequency genotype without mutations to the mutational matrix
         samples = rbind(samples, map_dbl(seq(1,ncol(samples)), function(x) 0) )
         freqs = c(freqs,0)
