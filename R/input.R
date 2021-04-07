@@ -16,10 +16,11 @@ read_MAF <- function(path, ...){
     maf <- read.maf(maf = path)
     # extract mutational matrix
     mat <- maf %>% mutCountMatrix() %>% 
-        apply(c(1,2), function(x) ifelse(x>0,1,0)) %>%
+        # apply(c(1,2), function(x) ifelse(x>0,1,0)) %>%
+        apply(c(1,2), function(x) as.numeric(x>0)) %>%
         t 
     # make boolean
-    mat <- Matrix(mat, sparse = TRUE)
+    mat <- Matrix(mat, sparse = TRUE) 
     mat
 } 
 
