@@ -22,14 +22,9 @@ Get associations between graph nodes and the samples of the original dataset
 \examples{
 require(dplyr)
 require(networkD3)
-preproc <- example_dataset() \%>\% dataset_preprocessing
-samples <- preproc[["samples"]]
-freqs   <- preproc[["freqs"]]
-labels  <- preproc[["labels"]]
-genes   <- preproc[["genes"]]
-g <- graph_non_transitive_subset_topology(samples, labels)
-W <- compute_weights_default(g, freqs)
-gr <- igraph_to_networkD3(g)
+out <- quick_run(example_dataset())
+gr <- igraph_to_networkD3(out$topology)
+gr$nodes$label <- unlist(out$labels, use.names=FALSE) 
 get_samples_lables_matches(gr, example_dataset())
 
 }
