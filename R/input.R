@@ -192,7 +192,7 @@ read_CAPRI <- function(filepath){
         samples <- c(samples, map_chr(chunk, ~ .[1]))
         
         new_rows <- map(chunk, ~ .[-1]) %>% unlist %>% map_int(~strtoi(.))
-        mutmatrix <- rbind(mutmatrix, Matrix(new_rows, sparse = TRUE, ncol = length(genes))) 
+        mutmatrix <- rbind(mutmatrix, Matrix(new_rows, sparse = TRUE, ncol = length(genes), byrow = TRUE)) 
     }
     
     # close connection
@@ -250,7 +250,7 @@ read_CAPRIpop <- function(filepath){
         counts <- c(counts, map_chr(chunk, ~ .[length(counts)]))
         
         new_rows <- map(chunk, ~ .[-1, -length(counts)]) %>% unlist %>% map_int(~strtoi(.))
-        mutmatrix <- rbind(mutmatrix, Matrix(new_rows, sparse = TRUE, ncol = length(genes))) 
+        mutmatrix <- rbind(mutmatrix, Matrix(new_rows, sparse = TRUE, ncol = length(genes), byrow = TRUE)) 
     }
     
     # close connection
