@@ -82,6 +82,7 @@ draw_networkD3 <- function(g, W, labels){
 #' @param g graph to be drawn
 #' @param W weights on edges
 #' @param labels node labels
+#' @param original_dataset if not NULL, recover matching samples from the rownames of the original dataset
 #'
 #' @return visNetwork object representing g as described
 #'
@@ -97,7 +98,7 @@ draw_networkD3 <- function(g, W, labels){
 #' draw_visNetwork(g,W,labels)
 #'
 #' @export draw_visNetwork
-draw_visNetwork <- function(g, W, labels){
+draw_visNetwork <- function(g, W, labels, original_dataset = NULL){
 
     V(g)$label <- labels
     E(g)$label <- W
@@ -105,16 +106,27 @@ draw_visNetwork <- function(g, W, labels){
     gr <- igraph_to_networkD3(g)
     gr$nodes$label = unlist(labels, use.names=FALSE)
 
+    if(!is.null(original_dataset)){
+        matching_samples <- get_samples_lables_matches(gr, original_dataset)
+    }
+
+    if(is.null(original_dataset)){
+        matching_samples <- ""
+    }else{
+        matching_samples <- paste0("<br></p></font><p>Matching:<br>", matching_samples)
+    }
+   
     nodes <- data.frame(
         id = gr$nodes$name,
         label = seq(1,length(gr$nodes$label)), #gr$nodes$label,
         shadow = TRUE,
         shape = "box",
         title = paste0("<font color=\"black\"><p>Node:<br>",
-                    gr$nodes$label,"</p></font>")
+                    gr$nodes$label,
+                    matching_samples)
     )
     # compute genotype difference from source to destination
-    diff = map2(gr$links$source, gr$links$target,
+    diff <- map2(gr$links$source, gr$links$target,
                 function(x, y){
                     a <- unlist(strsplit(gr$nodes$label[x+1], ", "))
                     b <- unlist(strsplit(gr$nodes$label[y+1], ", "))
@@ -138,6 +150,56 @@ draw_visNetwork <- function(g, W, labels){
     grp <- toVisNetworkData(g, idToLabel = TRUE)
 
     visNetwork(nodes, edges)
+}
+
+
+#' Get associations between graph nodes and the samples of the original dataset
+#' 
+#' @param gr a networkD3 graph
+#' @param original_dataset a dataset with row and column names (samples, genes)
+#' 
+#' @return a character vector of comma separated sample identifiers. 
+#' These lists consists of the identifiers of the samples that match a certain node in the graph.
+#' (follows node's orderd in the graph).
+#'  
+#' @examples
+#' require(dplyr)
+#' require(networkD3)
+#' preproc <- example_dataset() %>% dataset_preprocessing
+#' samples <- preproc[["samples"]]
+#' freqs   <- preproc[["freqs"]]
+#' labels  <- preproc[["labels"]]
+#' genes   <- preproc[["genes"]]
+#' g <- graph_non_transitive_subset_topology(samples, labels)
+#' W <- compute_weights_default(g, freqs)
+#' gr <- igraph_to_networkD3(g)
+#' get_samples_lables_matches(gr, example_dataset())
+#' 
+get_samples_lables_matches <- function(gr, original_dataset){
+    # prepare a matrix that will report for each pair (graph_node, sample) if the sample belongs to that graph_node 
+    match_matrix <- matrix(rep(0, times=length(gr$nodes$name)*nrow(original_dataset)), ncol = nrow(original_dataset))
+    # extract the list of considered genes in this analysis
+    considered_genes <- strsplit( paste(gr$nodes$label, collapse = ", "), ",\\s*")[[1]] %>% unique 
+    considered_genes <- considered_genes[considered_genes!="Clonal"]
+    # find pairs (node, sample) with complete matching on wt/mutated genes
+    for(node_i in seq(1,length(gr$nodes$name))){
+        for(sample in seq(1,nrow(original_dataset))){
+            matching <- TRUE
+            present_genes <- strsplit(gr$nodes$label[[node_i]] , ",\\s*")[[1]]
+            for(gene in considered_genes){
+                if(original_dataset[sample,gene] != gene %in% present_genes){
+                    matching <- FALSE
+                }
+            }
+            match_matrix[node_i, sample] <- matching
+        }
+    }
+    # prepare strings
+    matching_samples <- rep("", times = length(gr$nodes$name))
+    for(node_i in seq(1,length(gr$nodes$name))){
+        matching_samples[node_i] <- rownames(original_dataset)[which(match_matrix[node_i, ] == TRUE)] %>% paste(collapse = ", ")
+    }
+    matching_samples
 }
 
 
