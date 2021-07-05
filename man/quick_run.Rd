@@ -13,7 +13,7 @@ quick_run(dataset, mode = "CAPRI")
 }
 \value{
 a list object representing the graph computed by CIMICE with the
-structure `list(topology = g, weights = W, labels = labels)`
+structure `list(topology = g, weights = W, labels = labels, freqs=freqs)`
 }
 \description{
 This function executes CIMICE analysis on a dataset using default settings.
