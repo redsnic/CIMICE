@@ -174,7 +174,7 @@ draw_visNetwork <- function(g, W, labels, original_dataset = NULL){
 #' W <- compute_weights_default(g, freqs)
 #' gr <- igraph_to_networkD3(g)
 #' get_samples_lables_matches(gr, example_dataset())
-#' 
+#'
 get_samples_lables_matches <- function(gr, original_dataset){
     # prepare a matrix that will report for each pair (graph_node, sample) if the sample belongs to that graph_node 
     match_matrix <- matrix(rep(0, times=length(gr$nodes$name)*nrow(original_dataset)), ncol = nrow(original_dataset))
