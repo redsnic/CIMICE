@@ -24,6 +24,23 @@ read_MAF <- function(path, ...){
     mat
 } 
 
+#' Read dataset from an R matrix
+#' 
+#' also converts that matrix to a sparse matrix
+#'
+#' @param mat a boolean mutational matrix
+#'  
+#' @return the sparse mutational matrix to be used as CIMICE's input
+#' 
+#' @examples 
+#' m <- matrix(c(0,0,1,1,0,1,1,1,1), ncol=3)
+#' colnames(m) <- c("A","B","C")
+#' rownames(m) <- c("S1", "S2", "S3")
+#' read_matrix(m)
+#' @export read_matrix
+read_matrix <- function(mat){
+    Matrix(mat, sparse=TRUE)
+}
 
 #' Gradually read a file from disk
 #'
