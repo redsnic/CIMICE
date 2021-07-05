@@ -106,19 +106,27 @@ draw_visNetwork <- function(g, W, labels, original_dataset = NULL){
     gr <- igraph_to_networkD3(g)
     gr$nodes$label = unlist(labels, use.names=FALSE)
 
+    labs <- seq(1,length(gr$nodes$label)) %>% map_chr(~as.character(.))
     if(!is.null(original_dataset)){
         matching_samples <- get_samples_lables_matches(gr, original_dataset)
+        for(i in seq(1,length(gr$nodes$label))){
+            if(length(strsplit(matching_samples[i], ",")[[1]]) <= 4){
+                labs[i] <- matching_samples[i]
+            }
+        }
     }
-
+    
     if(is.null(original_dataset)){
         matching_samples <- ""
     }else{
         matching_samples <- paste0("<br></p></font><p>Matching:<br>", matching_samples)
     }
    
+    
+    
     nodes <- data.frame(
         id = gr$nodes$name,
-        label = seq(1,length(gr$nodes$label)), #gr$nodes$label,
+        label = labs, #gr$nodes$label,
         shadow = TRUE,
         shape = "box",
         title = paste0("<font color=\"black\"><p>Node:<br>",
@@ -175,6 +183,7 @@ draw_visNetwork <- function(g, W, labels, original_dataset = NULL){
 #' gr <- igraph_to_networkD3(g)
 #' get_samples_lables_matches(gr, example_dataset())
 #'
+#' @export get_samples_lables_matches
 get_samples_lables_matches <- function(gr, original_dataset){
     # prepare a matrix that will report for each pair (graph_node, sample) if the sample belongs to that graph_node 
     match_matrix <- matrix(rep(0, times=length(gr$nodes$name)*nrow(original_dataset)), ncol = nrow(original_dataset))
