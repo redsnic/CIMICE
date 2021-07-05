@@ -66,7 +66,7 @@ draw_networkD3 <- function(g, W, labels){
     E(g)$label <- W
 
     gr <- igraph_to_networkD3(g)
-    gr$nodes$label = unlist(labels, use.names=FALSE)
+    gr$nodes$label <- unlist(labels, use.names=FALSE)
     # Create force directed network plot
     p<-forceNetwork(Links = gr$links, Nodes = gr$nodes,
                     Source = 'source', Target = 'target', Value = "value",
@@ -104,7 +104,7 @@ draw_visNetwork <- function(g, W, labels, original_dataset = NULL){
     E(g)$label <- W
 
     gr <- igraph_to_networkD3(g)
-    gr$nodes$label = unlist(labels, use.names=FALSE)
+    gr$nodes$label <- unlist(labels, use.names=FALSE)
 
     labs <- seq(1,length(gr$nodes$label)) %>% map_chr(~as.character(.))
     if(!is.null(original_dataset)){
@@ -122,8 +122,6 @@ draw_visNetwork <- function(g, W, labels, original_dataset = NULL){
         matching_samples <- paste0("<br></p></font><p>Matching:<br>", matching_samples)
     }
    
-    
-    
     nodes <- data.frame(
         id = gr$nodes$name,
         label = labs, #gr$nodes$label,
@@ -173,14 +171,9 @@ draw_visNetwork <- function(g, W, labels, original_dataset = NULL){
 #' @examples
 #' require(dplyr)
 #' require(networkD3)
-#' preproc <- example_dataset() %>% dataset_preprocessing
-#' samples <- preproc[["samples"]]
-#' freqs   <- preproc[["freqs"]]
-#' labels  <- preproc[["labels"]]
-#' genes   <- preproc[["genes"]]
-#' g <- graph_non_transitive_subset_topology(samples, labels)
-#' W <- compute_weights_default(g, freqs)
-#' gr <- igraph_to_networkD3(g)
+#' out <- quick_run(example_dataset())
+#' gr <- igraph_to_networkD3(out$topology)
+#' gr$nodes$label <- unlist(out$labels, use.names=FALSE) 
 #' get_samples_lables_matches(gr, example_dataset())
 #'
 #' @export get_samples_lables_matches
