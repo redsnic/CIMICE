@@ -4,7 +4,7 @@
 \alias{draw_visNetwork}
 \title{VisNetwork graph output (default)}
 \usage{
-draw_visNetwork(g, W, labels)
+draw_visNetwork(g, W, labels, original_dataset = NULL)
 }
 \arguments{
 \item{g}{graph to be drawn}
@@ -12,6 +12,8 @@ draw_visNetwork(g, W, labels)
 \item{W}{weights on edges}
 
 \item{labels}{node labels}
+
+\item{original_dataset}{if not NULL, recover matching samples from the rownames of the original dataset}
 }
 \value{
 visNetwork object representing g as described
