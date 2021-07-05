@@ -7,7 +7,7 @@
 quick_run(dataset, mode = "CAPRI")
 }
 \arguments{
-\item{dataset}{a mutational matrix as a data frame}
+\item{dataset}{a mutational matrix as a (sparse) matrix}
 
 \item{mode}{indicates the used input format. Must be either "CAPRI" or "CAPRIpop"}
 }
