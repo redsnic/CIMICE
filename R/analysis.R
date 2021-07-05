@@ -184,11 +184,11 @@ compute_weights_default <- function(g, freqs){
 #'
 #' This function executes CIMICE analysis on a dataset using default settings.
 #'
-#' @param dataset a mutational matrix as a data frame
+#' @param dataset a mutational matrix as a (sparse) matrix
 #' @param mode indicates the used input format. Must be either "CAPRI" or "CAPRIpop"
 #'
 #' @return a list object representing the graph computed by CIMICE with the
-#' structure `list(topology = g, weights = W, labels = labels)`
+#' structure `list(topology = g, weights = W, labels = labels, freqs=freqs)`
 #'
 #' @examples
 #' quick_run(example_dataset())
@@ -210,5 +210,5 @@ quick_run <- function(dataset, mode="CAPRI"){
     genes   <- preproc[["genes"]]
     g <- graph_non_transitive_subset_topology(samples,labels)
     W <- compute_weights_default(g, freqs)
-    list(topology = g, weights = W, labels = labels)
+    list(topology = g, weights = W, labels = labels, freqs=freqs)
 }
