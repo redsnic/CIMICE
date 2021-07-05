@@ -106,8 +106,9 @@ binary_radix_sort <- function(mat){
 #'
 #' @param mutmatrix input dataset (mutational matrix)
 #'
-#' @return the compacted dataset (mutational matrix)
-#'
+#' @return a list with matrix (the compacted dataset (mutational matrix)) and counts 
+#' (frequencies of genotypes) fields
+#' 
 #' @examples
 #' compact_dataset(example_dataset())
 #'
