@@ -152,11 +152,11 @@ read_CAPRI_string <- function(txt){
     # read string as csv
     df <- read.csv(text=txt, sep="", strip.white = TRUE, blank.lines.skip = TRUE, row.names = NULL)
     # separate genes, samples and mutational matrix
-    samples <- (df[1,])[-1]
-    genes <- (df[,1])[-1]
-    mutmatrix <- df[-1,-1] %>% as.matrix %>% Matrix(sparse = TRUE) 
+    samples <- (df[,1])
+    genes <- colnames(df)[-1]
+    mutmatrix <- df[,-1] %>% as.matrix %>% Matrix(sparse = TRUE) 
     # glue components together
-    annotate_mutational_matrix(mutmatrix, genes, samples)
+    annotate_mutational_matrix(mutmatrix, samples, genes)
 }
 
 #' Read a "CAPRI" file
