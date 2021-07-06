@@ -113,8 +113,11 @@ dataset_preprocessing_population <- function(compactedDataset){
     freqs <- fix[["freqs"]]
     labels <- fix[["labels"]]
     # return a list with the prepared dataset and its additional information
+    if( is.null(compactedDataset$row_names) ){
+        compactedDataset$row_names <- rownames(compactedDataset$matrix)
+    }
     list("samples" = samples, "freqs" = freqs,
-        "labels" = labels, "genes" = genes)
+        "labels" = labels, "genes" = genes, "matching_samples" = compactedDataset$row_names)
 }
 
 #' Default preparation of graph topology
@@ -208,7 +211,8 @@ quick_run <- function(dataset, mode="CAPRI"){
     freqs   <- preproc[["freqs"]]
     labels  <- preproc[["labels"]]
     genes   <- preproc[["genes"]]
+    matching_samples   <- preproc[["matching_samples"]]
     g <- graph_non_transitive_subset_topology(samples,labels)
     W <- compute_weights_default(g, freqs)
-    list(topology = g, weights = W, labels = labels, freqs=freqs)
+    list(topology = g, weights = W, labels = labels, freqs=freqs, matching_samples=matching_samples)
 }
