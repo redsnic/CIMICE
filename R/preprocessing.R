@@ -106,8 +106,8 @@ binary_radix_sort <- function(mat){
 #'
 #' @param mutmatrix input dataset (mutational matrix)
 #'
-#' @return a list with matrix (the compacted dataset (mutational matrix)) and counts 
-#' (frequencies of genotypes) fields
+#' @return a list with matrix (the compacted dataset (mutational matrix)), counts 
+#' (frequencies of genotypes) and row_names (comma separated string of sample IDs) fields
 #' 
 #' @examples
 #' compact_dataset(example_dataset())
@@ -115,23 +115,33 @@ binary_radix_sort <- function(mat){
 #' @export compact_dataset
 compact_dataset <- function(mutmatrix){
     mutmatrix <- binary_radix_sort(mutmatrix)
-    
+    # manage row names
+    old_row_names <- rownames(mutmatrix)
+    if(is.null(old_row_names)){
+        old_row_names <- map_chr(seq(1,nrow(mutmatrix), ~ as.character(.)))
+    }
+    row_names <- list()
     cnt <- 1
     counts <- c()
     # keep only a line per genotype (the first line is always new)
     valid_indexes <- c(1)
+    pos <- 1
+    row_names[[pos]] <- old_row_names[1]
     for(i in seq(1,nrow(mutmatrix)-1)){
         if( all(mutmatrix[i,] == mutmatrix[i+1,]) ){
             cnt <- cnt + 1
+            row_names[[pos]] <- paste(row_names[[pos]], old_row_names[i], sep=", ")
         }else{
             valid_indexes <- c(valid_indexes, i+1)
             counts <- c(counts, cnt)
             cnt <- 1
+            pos <- pos + 1
+            row_names[[pos]] <- old_row_names[i]
         }
     }
     counts <- c(counts, cnt) 
     
-    list(matrix = mutmatrix[c(valid_indexes), ], counts = counts)
+    list(matrix = mutmatrix[c(valid_indexes), ], counts = counts, row_names = row_names)
 }
 
 
