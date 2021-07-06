@@ -4,14 +4,12 @@
 \alias{draw_networkD3}
 \title{NetworkD3 graph output}
 \usage{
-draw_networkD3(g, W, labels)
+draw_networkD3(out, ...)
 }
 \arguments{
-\item{g}{graph to be drawn}
+\item{out}{the output object of CIMICE (es, from quick run)}
 
-\item{W}{weights on edges}
-
-\item{labels}{node labels}
+\item{...}{other arguments for format_labels}
 }
 \value{
 networkD3 object representing g as described
@@ -20,14 +18,6 @@ networkD3 object representing g as described
 Draws the output graph using networkD3
 }
 \examples{
-require(dplyr)
-preproc <- example_dataset() \%>\% dataset_preprocessing
-samples <- preproc[["samples"]]
-freqs   <- preproc[["freqs"]]
-labels  <- preproc[["labels"]]
-genes   <- preproc[["genes"]]
-g <- graph_non_transitive_subset_topology(samples, labels)
-W <- compute_weights_default(g, freqs)
-draw_networkD3(g,W,labels)
+draw_networkD3(quick_run(example_dataset()))
 
 }
