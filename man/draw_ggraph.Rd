@@ -4,16 +4,14 @@
 \alias{draw_ggraph}
 \title{ggplot graph output}
 \usage{
-draw_ggraph(g, W, labels, digits = 4)
+draw_ggraph(out, digits = 4, ...)
 }
 \arguments{
-\item{g}{graph to be drawn}
-
-\item{W}{weights on edges}
-
-\item{labels}{node labels}
+\item{out}{the output object of CIMICE (es, from quick run)}
 
 \item{digits}{precision for edges' weights}
+
+\item{...}{other arguments for format_labels}
 }
 \value{
 ggraph object representing g as described
@@ -22,14 +20,6 @@ ggraph object representing g as described
 Draws the output graph using ggplot
 }
 \examples{
-require(dplyr)
-preproc <- example_dataset() \%>\% dataset_preprocessing
-samples <- preproc[["samples"]]
-freqs   <- preproc[["freqs"]]
-labels  <- preproc[["labels"]]
-genes   <- preproc[["genes"]]
-g <- graph_non_transitive_subset_topology(samples, labels)
-W <- compute_weights_default(g, freqs)
-draw_ggraph(g,W,labels,digit = 3)
+draw_ggraph(quick_run(example_dataset()))
 
 }
