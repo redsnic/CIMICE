@@ -10,8 +10,8 @@ compact_dataset(mutmatrix)
 \item{mutmatrix}{input dataset (mutational matrix)}
 }
 \value{
-a list with matrix (the compacted dataset (mutational matrix)) and counts 
-(frequencies of genotypes) fields
+a list with matrix (the compacted dataset (mutational matrix)), counts 
+(frequencies of genotypes) and row_names (comma separated string of sample IDs) fields
 }
 \description{
 Count duplicate rows
