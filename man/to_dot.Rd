@@ -4,14 +4,12 @@
 \alias{to_dot}
 \title{Dot graph output}
 \usage{
-to_dot(g, W, labels)
+to_dot(out, ...)
 }
 \arguments{
-\item{g}{graph to be drawn}
+\item{out}{the output object of CIMICE (es, from quick run)}
 
-\item{W}{weights on edges}
-
-\item{labels}{node labels}
+\item{...}{other arguments for format_labels}
 }
 \value{
 a string representing the graph in dot format
@@ -20,15 +18,6 @@ a string representing the graph in dot format
 Represents this graph in dot format (a textual output format)
 }
 \examples{
-require(dplyr)
-require(purrr)
-preproc <- example_dataset() \%>\% dataset_preprocessing
-samples <- preproc[["samples"]]
-freqs   <- preproc[["freqs"]]
-labels  <- preproc[["labels"]]
-genes   <- preproc[["genes"]]
-g <- graph_non_transitive_subset_topology(samples, labels)
-W <- compute_weights_default(g, freqs)
-to_dot(g,W,labels)
+to_dot(quick_run(example_dataset()))
 
 }
