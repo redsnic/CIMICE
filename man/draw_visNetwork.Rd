@@ -4,16 +4,12 @@
 \alias{draw_visNetwork}
 \title{VisNetwork graph output (default)}
 \usage{
-draw_visNetwork(g, W, labels, original_dataset = NULL)
+draw_visNetwork(out, ...)
 }
 \arguments{
-\item{g}{graph to be drawn}
+\item{out}{the output object of CIMICE (es, from quick run)}
 
-\item{W}{weights on edges}
-
-\item{labels}{node labels}
-
-\item{original_dataset}{if not NULL, recover matching samples from the rownames of the original dataset}
+\item{...}{other arguments for format_labels}
 }
 \value{
 visNetwork object representing g as described
@@ -22,14 +18,6 @@ visNetwork object representing g as described
 Draws the output graph using VisNetwork
 }
 \examples{
-require(dplyr)
-preproc <- example_dataset() \%>\% dataset_preprocessing
-samples <- preproc[["samples"]]
-freqs   <- preproc[["freqs"]]
-labels  <- preproc[["labels"]]
-genes   <- preproc[["genes"]]
-g <- graph_non_transitive_subset_topology(samples, labels)
-W <- compute_weights_default(g, freqs)
-draw_visNetwork(g,W,labels)
+draw_visNetwork(quick_run(example_dataset()))
 
 }
