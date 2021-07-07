@@ -101,20 +101,13 @@ W <- compute_weights_default(g, freqs)
 
 ## Visualize output:
 
-CIMICE supports many different output options, the reccomended one is based on "visNetwork".
+CIMICE supports many different output options, the recommended one is based on "visNetwork".
 
 ```{r}
-draw_visNetwork(g, W, labels)
+out <- quick_run(example_dataset()) # quick_run summarizes all the previous steps
+draw_visNetwork(out)
 ```
 
-## Quick run
-
-To quickly run CIMICE in its default settings, use `CIMICE::quick_run`
-
-```{r}
-ans <- quick_run(example_dataset())
-draw_visNetwork(ans$topology, ans$weights, ans$labels)
-```
 
 
 
