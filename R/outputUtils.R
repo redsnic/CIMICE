@@ -22,7 +22,7 @@ draw_ggraph <- function(out, digits = 4, ...){
 
     weights <- signif(W, digits = 4)
 
-    ggraph(g, layout = "kk") +
+    ggraph(g, layout = "sugiyama") +
         geom_node_point() +
         geom_node_label(aes(label=labels)) +
         geom_edge_link(
@@ -148,7 +148,7 @@ draw_networkD3 <- function(out, ...){
     p<-forceNetwork(Links = gr$links, Nodes = gr$nodes,
                     Source = 'source', Target = 'target', Value = "value",
                     NodeID = 'label', Group = 'name',
-                    zoom=TRUE, arrows = TRUE, opacityNoHover = 1)
+                    zoom=TRUE, arrows = TRUE, opacityNoHover = FALSE)
     p
 }
 
@@ -295,7 +295,7 @@ draw_visNetwork <- function(out, ...){
     
     grp <- toVisNetworkData(g, idToLabel = TRUE)
     
-    visNetwork(nodes, edges)
+    visNetwork(nodes, edges) %>% visHierarchicalLayout(sortMethod="directed")
 }
 
 
