@@ -255,20 +255,20 @@ draw_visNetwork <- function(out, ...){
     W <- out$weights
     labels <- make_labels(out, ...)
     
-    V(g)$label <- labels
+    V(g)$label <- out$labels
     E(g)$label <- W
     
     gr <- igraph_to_networkD3(g)
-    gr$nodes$label <- unlist(labels, use.names=FALSE)
+    gr$nodes$label <- unlist(out$labels, use.names=FALSE)
     
     nodes <- data.frame(
         id = gr$nodes$name,
         label = labels, #gr$nodes$label,
         shadow = TRUE,
         shape = "box",
-        title = paste0("<font color=\"black\"><p>Node:<br>",
+        title = paste0("<font color=\"black\"><p>Genotype:<br>",
                        gr$nodes$label, 
-                       "<br><p>Matching:<br>",
+                       "<br><p>Matching samples:<br>",
                        out$matching_samples)
     )
     # compute genotype difference from source to destination
