@@ -24,7 +24,7 @@
 #' @importFrom igraph graph_from_adjacency_matrix as_edgelist
 #' @importFrom igraph graph_from_edgelist as_adj E<- V<-
 #' @importFrom networkD3 igraph_to_networkD3 forceNetwork
-#' @importFrom visNetwork toVisNetworkData visNetwork
+#' @importFrom visNetwork toVisNetworkData visNetwork visHierarchicalLayout
 #' @importFrom ggcorrplot ggcorrplot
 #' @importFrom purrr map2 map_dbl imap_chr map map_chr map_int map2_chr
 #' @importFrom ggraph ggraph geom_node_point geom_node_label
