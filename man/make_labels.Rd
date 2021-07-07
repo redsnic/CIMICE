@@ -10,6 +10,10 @@ make_labels(out, mode = "samplesIDs", max_col = 3, max_row = 3)
 \item{out}{the output object of CIMICE (es, from quick run)}
 
 \item{mode}{which labels to print: samplesIDs (matching samples), sequentialIDs (just a sequential numer), geneIDs (genotype)}
+
+\item{max_col}{identifiers are represented in a max_col times max_row grid (if the number of IDs exceeds, a the sequentialID number is used instead)}
+
+\item{max_row}{identifiers are represented in a max_col times max_row grid (if the number of IDs exceeds, a the sequentialID number is used instead)}
 }
 \value{
 the requested labels
