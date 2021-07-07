@@ -420,13 +420,13 @@ check the Quick Guide instead.
 This is the output based on `ggraph`, it is ideal for small graphs but, for legibility reasons, it is better not to use it with long labels.
 
 ```{r}
-draw_ggraph(g, normDownWeights, labels)
+draw_ggraph(quick_run(example_dataset()))
 ```
 
 The `networkD3` is a quite valid interactive approach, but it lacks the option to draw labels on edges, limiting the representation to thicker or thinner edges.
 
 ```{r, results = 'hide'}
-draw_networkD3(g, normDownWeights, labels)
+draw_networkD3(quick_run(example_dataset()))
 ```
 
 ```{r, echo=FALSE, out.width = "100%", out.height="100%"}
@@ -438,7 +438,7 @@ The `visNetwork` approach is overall the best for interactive purposes. It allow
 in particular with textboxes and the "hovering condition" for vertex and edges.
 
 ```{r, results = 'hide'}
-draw_visNetwork(g, normDownWeights, labels)
+draw_visNetwork(quick_run(example_dataset()))
 ```
 ```{r, echo=FALSE, out.width = "100%", out.height="100%"}
 knitr::include_graphics("visGraph.png")
@@ -448,7 +448,7 @@ Finally, it is also possible to export CIMICE's output to the standard [dot form
 for use in other visualization applications.
 
 ```{r}
-cat( to_dot(g, normDownWeights, labels) )
+cat(to_dot(quick_run(example_dataset())))
 ```
 
 
