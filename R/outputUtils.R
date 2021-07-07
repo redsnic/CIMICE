@@ -97,6 +97,8 @@ format_labels <- function(labels, max_col = 3, max_row = 3){
 #' 
 #' @param out the output object of CIMICE (es, from quick run)
 #' @param mode which labels to print: samplesIDs (matching samples), sequentialIDs (just a sequential numer), geneIDs (genotype)
+#' @param max_col identifiers are represented in a max_col times max_row grid (if the number of IDs exceeds, a the sequentialID number is used instead) 
+#' @param max_row identifiers are represented in a max_col times max_row grid (if the number of IDs exceeds, a the sequentialID number is used instead)
 #' 
 #' @return the requested labels
 #'
