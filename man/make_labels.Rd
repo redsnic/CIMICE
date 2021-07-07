@@ -19,6 +19,6 @@ This function helps creating labels for nodes with different information
 }
 \examples{
  
-make_labels(quick_run(read("~/Scrivania/Xu2012.CAPRI")))
+make_labels(quick_run(example_dataset()))
 
 }
