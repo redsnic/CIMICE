@@ -118,7 +118,7 @@ compact_dataset <- function(mutmatrix){
     # manage row names
     old_row_names <- rownames(mutmatrix)
     if(is.null(old_row_names)){
-        old_row_names <- map_chr(seq(1,nrow(mutmatrix), ~ as.character(.)))
+        old_row_names <- map_chr(seq(1,nrow(mutmatrix)), ~ as.character(.))
     }
     row_names <- list()
     cnt <- 1
@@ -130,17 +130,16 @@ compact_dataset <- function(mutmatrix){
     for(i in seq(1,nrow(mutmatrix)-1)){
         if( all(mutmatrix[i,] == mutmatrix[i+1,]) ){
             cnt <- cnt + 1
-            row_names[[pos]] <- paste(row_names[[pos]], old_row_names[i], sep=", ")
+            row_names[[pos]] <- paste(row_names[[pos]], old_row_names[i+1], sep=", ")
         }else{
             valid_indexes <- c(valid_indexes, i+1)
             counts <- c(counts, cnt)
             cnt <- 1
             pos <- pos + 1
-            row_names[[pos]] <- old_row_names[i]
+            row_names[[pos]] <- old_row_names[i+1]
         }
     }
     counts <- c(counts, cnt) 
-    
     list(matrix = mutmatrix[c(valid_indexes), ], counts = counts, row_names = row_names)
 }
 
