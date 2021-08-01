@@ -19,7 +19,7 @@
   }
 }
   
-\section{Changes in CIMICE-R version 1.0.1}{
+\section{Changes in CIMICE-R version 1.1.1}{
 
   \subsection{Overview:}{
       \itemize{
