@@ -232,10 +232,12 @@ read_CAPRIpop <- function(filepath){
     reader <- chunk_reader(filepath)
     
     # read header, remove first column name
-    genes <- (reader$read(1) %>% strsplit("\\s+"))[[1]][-1] 
+    genes <- (reader$read(1) %>% strsplit("\\s+"))[[1]][-1]
+    genes <- genes[-length(genes)]
     mutmatrix <- Matrix(, ncol = length(genes), nrow=0)
     rown <- c()
     counts <- c()
+    samples <- c()
     
     while(TRUE){
         chunk <- reader$read()
@@ -247,16 +249,17 @@ read_CAPRIpop <- function(filepath){
         chunk <- map(chunk, ~ strsplit(., "\\s+")[[1]])
         
         samples <- c(samples, map_chr(chunk, ~ .[1]))
-        counts <- c(counts, map_chr(chunk, ~ .[length(counts)]))
-        
-        new_rows <- map(chunk, ~ .[-1, -length(counts)]) %>% unlist %>% map_int(~strtoi(.))
+        # keep last column
+        counts <- c(counts, map_chr(chunk, ~ .[length(genes)+2]))
+        # remove last and first columns from the matrix
+        new_rows <- map(chunk, ~ .[c(-1, -length(chunk[[1]]))]) %>% unlist %>% map_int(~strtoi(.))
         mutmatrix <- rbind(mutmatrix, Matrix(new_rows, sparse = TRUE, ncol = length(genes), byrow = TRUE)) 
     }
     
     # close connection
     reader$close()
     # list [mutational matrix, frequencies]
-    list(matrix = annotate_mutational_matrix(mutmatrix, samples, genes), counts = counts)
+    list(matrix = annotate_mutational_matrix(mutmatrix, samples, genes), counts = as.numeric(counts))
 }
 
 
