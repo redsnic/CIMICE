@@ -1,5 +1,3 @@
-
-
 \name{NEWS}
 \title{News for Package 'CIMICE-R'}
 \section{Changes in CIMICE-R version 0.99.0}{
@@ -35,7 +33,6 @@
   }
 }
 
-
 \section{Changes in CIMICE-R version 1.1.3}{
 
   \subsection{Overview:}{
@@ -50,3 +47,4 @@
       }
   }
 }
+
