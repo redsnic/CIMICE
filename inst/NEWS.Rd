@@ -35,3 +35,18 @@
   }
 }
 
+
+\section{Changes in CIMICE-R version 1.1.3}{
+
+  \subsection{Overview:}{
+      \itemize{
+        \item I/O Improvements
+      }
+  }
+
+  \subsection{New functionalities:}{
+      \itemize{
+        \item Fixed and improved input in CAPRIpop dataset format
+      }
+  }
+}
