@@ -159,6 +159,40 @@ read_CAPRI_string <- function(txt){
     annotate_mutational_matrix(mutmatrix, samples, genes)
 }
 
+#' Read "CAPRIpop" file from a string
+#'
+#' Read a "CAPRIpop" formatted file, from a text string
+#'
+#' @param txt string in valid "CAPRIpop" format
+#'
+#' @return the described mutational matrix as a (sparse) matrix
+#'
+#' @examples
+#' read_CAPRIpop_string("
+#' s\\g A B C D freqs
+#' S1 0 0 0 1 0.1
+#' S2 1 0 0 0 0.1
+#' S3 1 0 0 0 0.2
+#' S4 1 0 0 1 0.3
+#' S5 1 1 0 1 0.05
+#' S6 1 1 0 1 0.1
+#' S7 1 0 1 1 0.05
+#' S8 1 1 0 1 0.01
+#' ")
+#'
+#' @export read_CAPRIpop_string
+read_CAPRIpop_string <- function(txt){
+    # read string as csv
+    df <- read.csv(text=txt, sep="", strip.white = TRUE, blank.lines.skip = TRUE, row.names = NULL)
+    # separate genes, samples and mutational matrix
+    samples <- (df[,1])
+    genes <- colnames(df)[c(-1,-ncol(df))]
+    mutmatrix <- df[,c(-1,-ncol(df))] %>% as.matrix %>% Matrix(sparse = TRUE) 
+    counts <- df[,ncol(df)]
+    # glue components together
+    list(matrix = annotate_mutational_matrix(mutmatrix, samples, genes), counts = as.numeric(counts))
+}
+
 #' Read a "CAPRI" file
 #'
 #' Read a "CAPRI" formatted file from the file system
