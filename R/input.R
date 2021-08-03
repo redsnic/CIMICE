@@ -159,6 +159,7 @@ read_CAPRI_string <- function(txt){
     annotate_mutational_matrix(mutmatrix, samples, genes)
 }
 
+
 #' Read "CAPRIpop" file from a string
 #'
 #' Read a "CAPRIpop" formatted file, from a text string
@@ -193,6 +194,7 @@ read_CAPRIpop_string <- function(txt){
     list(matrix = annotate_mutational_matrix(mutmatrix, samples, genes), counts = as.numeric(counts))
 }
 
+
 #' Read a "CAPRI" file
 #'
 #' Read a "CAPRI" formatted file from the file system
@@ -216,7 +218,7 @@ read_CAPRI <- function(filepath){
     
     while(TRUE){
         chunk <- reader$read()
-        if(length(chunk) == 0){
+        if(length(chunk) == 0){ 
             break
         }
         
@@ -266,6 +268,7 @@ read_CAPRIpop <- function(filepath){
     reader <- chunk_reader(filepath)
     
     # read header, remove first column name
+
     genes <- (reader$read(1) %>% strsplit("\\s+"))[[1]][-1]
     genes <- genes[-length(genes)]
     mutmatrix <- Matrix(, ncol = length(genes), nrow=0)
@@ -293,6 +296,7 @@ read_CAPRIpop <- function(filepath){
     # close connection
     reader$close()
     # list [mutational matrix, frequencies]
+
     list(matrix = annotate_mutational_matrix(mutmatrix, samples, genes), counts = as.numeric(counts))
 }
 
