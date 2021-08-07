@@ -261,16 +261,9 @@ prepare_labels <- function(samples, genes){
 #' 
 #' # fix Colonal genotype absence, if needed
 #' fix <- fix_clonal_genotype(samples, freqs, labels)
-#' 
-#' samples <- fix[["samples"]]
-#' freqs <- fix[["freqs"]]
-#' labels <- fix[["labels"]]
-#' 
-#' list("samples" = samples, "freqs" = freqs,
-#'     "labels" = labels, "genes" = genes)
 #'
 #' @export fix_clonal_genotype
-fix_clonal_genotype <- function(samples, freqs, labels){
+fix_clonal_genotype <- function(samples, freqs, labels, matching_samples){
     # if no clonal genotype is found
     if (!(0 %in% rowSums(samples))){
         # add a 0 frequency genotype without mutations to the mutational matrix
@@ -278,8 +271,9 @@ fix_clonal_genotype <- function(samples, freqs, labels){
         freqs = c(freqs,0)
         # update labels
         labels = c(labels,"Clonal")
+        matching_samples = c(matching_samples, "Clonal")
     }
-    list("labels" = labels, "samples" = samples, "freqs"=freqs)
+    list("labels" = labels, "samples" = samples, "freqs"=freqs, "matching_samples"=matching_samples)
 }
 
 #' Remove transitive edges and prepare graph
