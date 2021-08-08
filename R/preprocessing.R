@@ -240,6 +240,7 @@ prepare_labels <- function(samples, genes){
 #' @param samples input dataset (mutational matrix) as matrix
 #' @param freqs genotype frequencies (in the rows' order)
 #' @param labels list of gene names (in the columns' order)
+#' @param matching_samples list of sample names matching each genotype
 #'
 #' @return a named list containing the fixed "samples", "freqs" and "labels"
 #'
@@ -258,20 +259,27 @@ prepare_labels <- function(samples, genes){
 #' 
 #' # prepare node labels listing the mutated genes for each node
 #' labels <- prepare_labels(samples, genes)
-#' 
+#' if( is.null(compactedDataset$row_names) ){
+#'   compactedDataset$row_names <- rownames(compactedDataset$matrix)
+#' }
+#' matching_samples <- compactedDataset$row_names
+#' # matching_samples
+#' matching_samples 
+#'
 #' # fix Colonal genotype absence, if needed
-#' fix <- fix_clonal_genotype(samples, freqs, labels)
+#' fix <- fix_clonal_genotype(samples, freqs, labels, matching_samples)
 #'
 #' @export fix_clonal_genotype
 fix_clonal_genotype <- function(samples, freqs, labels, matching_samples){
     # if no clonal genotype is found
     if (!(0 %in% rowSums(samples))){
         # add a 0 frequency genotype without mutations to the mutational matrix
-        samples = rbind(samples, map_dbl(seq(1,ncol(samples)), function(x) 0) )
-        freqs = c(freqs,0)
+        samples <- rbind(samples, map_dbl(seq(1,ncol(samples)), function(x) 0) )
+        rownames(samples)[nrow(samples)] <- "Clonal" 
+        freqs <- c(freqs,0)
         # update labels
-        labels = c(labels,"Clonal")
-        matching_samples = c(matching_samples, "Clonal")
+        labels <- c(labels,"Clonal")
+        matching_samples <- c(matching_samples, "Clonal")
     }
     list("labels" = labels, "samples" = samples, "freqs"=freqs, "matching_samples"=matching_samples)
 }
