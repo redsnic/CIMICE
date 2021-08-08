@@ -219,3 +219,6 @@ quick_run <- function(dataset, mode="CAPRI"){
     W <- compute_weights_default(g, freqs)
     list(topology = g, weights = W, labels = labels, freqs=freqs, matching_samples=matching_samples)
 }
+
+
+
