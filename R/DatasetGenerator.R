@@ -1,5 +1,4 @@
-
-
+utils::globalVariables(c("from", "label", "matching_sample", "rows", "to", "tot", "weight", "weight.x", "weight.y"))
 
 #' Create a stub for a generator 
 #'
@@ -25,7 +24,7 @@ make_generator_stub <- function(dataset){
   
   generator <- generator %E>% mutate(weight = 0)
   generator <- activate(generator, what="nodes")
-  generator
+  list(graph = generator, data = graph_data)
 }
 
 #' Add edge weights to a generator
@@ -46,20 +45,20 @@ make_generator_stub <- function(dataset){
 #' example_dataset() %>%
 #'  make_generator_stub() %>% 
 #'  set_generator_edges(
-#'  list(
-#'    "S1", "S4", 1 , 
-#'    "S2, S3", "S4", 1 , 
-#'    "S4", "S7", 1 , 
-#'    "S4", "S5, S6, S8", 1 , 
-#'    "Clonal", "S1", 1 , 
-#'    "Clonal", "S2, S3", 1 , 
-#'    "S1", "S1", 1 , 
-#'    "S2, S3", "S2, S3", 1 , 
-#'    "S4", "S4", 1 , 
-#'    "S7", "S7", 1 , 
-#'    "S5, S6, S8", "S5, S6, S8", 1 , 
-#'    "Clonal", "Clonal", 1 
-#'  ))
+#'    list(
+#'     "D", "A, D", 1 , 
+#'     "A", "A, D", 1 , 
+#'     "A, D", "A, C, D", 1 , 
+#'     "A, D", "A, B, D", 1 , 
+#'     "Clonal", "D", 1 , 
+#'     "Clonal", "A", 1 , 
+#'     "D", "D", 1 , 
+#'     "A", "A", 1 , 
+#'     "A, D", "A, D", 1 , 
+#'     "A, C, D", "A, C, D", 1 , 
+#'     "A, B, D", "A, B, D", 1 , 
+#'     "Clonal", "Clonal", 1 
+#'   ))
 #'    
 #' @export set_generator_edges      
 set_generator_edges <- function(generator, f_t_w_list, by = "labels"){
@@ -94,21 +93,20 @@ set_generator_edges <- function(generator, f_t_w_list, by = "labels"){
   
   from_l <- map_int(from_l, ~ ifelse(is.numeric(.),
                                      ., 
-                                     which((generator %N>% pull(!!id_col)) == .)))
+                                     which((generator$graph %N>% pull(!!id_col)) == .)))
   to_l <- map_int(to_l, ~ ifelse(is.numeric(.),
                                      ., 
-                                     which((generator %N>% pull(!!id_col)) == .)))
+                                     which((generator$graph %N>% pull(!!id_col)) == .)))
   
   # create the weight dataframe
   weights_df <- data.frame(from=from_l,to=to_l,weight=weight_l)
-  print(weights_df)
   
   # add weights
-  generator <- generator %E>% left_join(weights_df, by=c("from","to")) %>% 
+  generator$graph <- generator$graph %E>% left_join(weights_df, by=c("from","to")) %>% 
     mutate(weight = ifelse(is.na(weight.y), weight.x, weight.y)) %>% 
     select(-weight.x, -weight.y)
   
-  generator <- activate(generator, what="nodes")
+  generator$graph <- activate(generator$graph, what="nodes")
   generator
 }
 
@@ -120,6 +118,8 @@ set_generator_edges <- function(generator, f_t_w_list, by = "labels"){
 #' @param generator a generator 
 #' @param by "labels" or "samples" to use gene labels or sample labels as references for
 #' edge identifiers.
+#' 
+#' @return NULL (the string with the function calls is printed on the stdout) 
 #'
 #' @examples 
 #' require(dplyr)
@@ -129,12 +129,12 @@ set_generator_edges <- function(generator, f_t_w_list, by = "labels"){
 #'
 #' @export prepare_generator_edge_set_command
 prepare_generator_edge_set_command <- function(generator, by="labels"){
-  edges <- generator %E>% data.frame()
-  generator %N>% print
+  edges <- generator$graph %E>% data.frame()
+  generator$graph %N>% print
   if(by == "samples"){
-    names_vec <- generator %N>% pull(matching_sample)
+    names_vec <- generator$graph %N>% pull(matching_sample)
   }else{
-    names_vec <- generator %N>% pull(label)
+    names_vec <- generator$graph %N>% pull(label)
   }
   out <- c("set_generator_edges(\n  list(\n")
   for(row in seq(1,nrow(edges))){
@@ -157,6 +157,8 @@ prepare_generator_edge_set_command <- function(generator, by="labels"){
 #' Simple ggraph interface to draw a generator 
 #' 
 #' @param generator a generator
+#' 
+#' @return a basic plot of this generator
 #'
 #' @examples 
 #' require(dplyr)
@@ -164,24 +166,26 @@ prepare_generator_edge_set_command <- function(generator, by="labels"){
 #' example_dataset() %>%
 #'  make_generator_stub() %>% 
 #'  set_generator_edges(
-#'  list(
-#'    "S1", "S4", 1 , 
-#'    "S2, S3", "S4", 1 , 
-#'    "S4", "S7", 1 , 
-#'    "S4", "S5, S6, S8", 1 , 
-#'    "Clonal", "S1", 1 , 
-#'    "Clonal", "S2, S3", 1 , 
-#'    "S1", "S1", 1 , 
-#'    "S2, S3", "S2, S3", 1 , 
-#'    "S4", "S4", 1 , 
-#'    "S7", "S7", 1 , 
-#'    "S5, S6, S8", "S5, S6, S8", 1 , 
-#'    "Clonal", "Clonal", 1 
-#'  )) %>% finalize_generator %>%  plot_generator
+#'    list(
+#'     "D", "A, D", 1 , 
+#'     "A", "A, D", 1 , 
+#'     "A, D", "A, C, D", 1 , 
+#'     "A, D", "A, B, D", 1 , 
+#'     "Clonal", "D", 1 , 
+#'     "Clonal", "A", 1 , 
+#'     "D", "D", 1 , 
+#'     "A", "A", 1 , 
+#'     "A, D", "A, D", 1 , 
+#'     "A, C, D", "A, C, D", 1 , 
+#'     "A, B, D", "A, B, D", 1 , 
+#'     "Clonal", "Clonal", 1 
+#'   )) %>% 
+#'   finalize_generator %>% 
+#'   plot_generator
 #'  
 #' @export plot_generator
 plot_generator <- function(generator){
-  ggraph(generator, layout = "sugiyama") +
+  ggraph(generator$graph, layout = "sugiyama") +
     geom_node_point() +
     geom_node_label(aes(label=label)) +
     geom_edge_link(
@@ -207,45 +211,182 @@ plot_generator <- function(generator){
 #' 
 #' @param generator a generator 
 #' 
+#' @return A generator with edge weights that respect DTMC definition
+#' 
 #' @examples 
 #' require(dplyr)
 #' 
 #' example_dataset() %>%
 #'  make_generator_stub() %>% 
 #'  set_generator_edges(
-#'  list(
-#'    "S1", "S4", 1 , 
-#'    "S2, S3", "S4", 1 , 
-#'    "S4", "S7", 1 , 
-#'    "S4", "S5, S6, S8", 1 , 
-#'    "Clonal", "S1", 1 , 
-#'    "Clonal", "S2, S3", 1 , 
-#'    "S1", "S1", 1 , 
-#'    "S2, S3", "S2, S3", 1 , 
-#'    "S4", "S4", 1 , 
-#'    "S7", "S7", 1 , 
-#'    "S5, S6, S8", "S5, S6, S8", 1 , 
-#'    "Clonal", "Clonal", 1 
-#'  )) %>% finalize_generator
+#'    list(
+#'     "D", "A, D", 1 , 
+#'     "A", "A, D", 1 , 
+#'     "A, D", "A, C, D", 1 , 
+#'     "A, D", "A, B, D", 1 , 
+#'     "Clonal", "D", 1 , 
+#'     "Clonal", "A", 1 , 
+#'     "D", "D", 1 , 
+#'     "A", "A", 1 , 
+#'     "A, D", "A, D", 1 , 
+#'     "A, C, D", "A, C, D", 1 , 
+#'     "A, B, D", "A, B, D", 1 , 
+#'     "Clonal", "Clonal", 1 
+#'   )) %>% 
+#'   finalize_generator
 #' 
 #' @export finalize_generator
 finalize_generator <- function(generator){
-  normalization_df <- generator %E>% 
+  normalization_df <- generator$graph %E>% 
     data.frame() %>% 
     group_by(from) %>% 
     summarise(tot = sum(weight)) 
-  
-  print(normalization_df)
   
   if(length(which(normalization_df %>% pull(tot) == 0)) != 0){
     stop("Some node has no exiting edge with probability greater than 0.\nCheck your call to set_generator_edges")
   }
   
-  generator %E>% 
+  generator$graph <- generator$graph %E>% 
     left_join(normalization_df, by="from") %>% 
     mutate(weight = weight/tot) %>% 
     select(-tot)
+  
+  generator
 }
 
+#' Create datasets from generators
+#' 
+#' Simulate the DTMC associated to the generator to create a dataset
+#' that reflects the genotypes of `times` cells, sampled after
+#' `time_ticks` passages.
+#' 
+#' @param generator a generator 
+#' @param time_ticks number of steps (updates) of the DTMC associated to the generato
+#' @param times number of sumlated cells
+#' @param starting_label node from which to start the simulation
+#' @param by "labels" or "samples" to use gene labels or sample labels as references to identify the `starting_label`'s node
+#' @param mode "full" to generate a matrix with `times` genotypes, "compacted" to *efficiently* create an already compacted dataset 
+#' (a dataset showing the genotypes and their respective frequencies)
+#'
+#' @return the simulated dataset
+#'
+#' @examples 
+#' require(dplyr)
+#' 
+#' example_dataset() %>%
+#'   make_generator_stub() %>% 
+#'   set_generator_edges(
+#'     list(
+#'       "D", "A, D", 1 , 
+#'       "A", "A, D", 1 , 
+#'       "A, D", "A, C, D", 1 , 
+#'       "A, D", "A, B, D", 1 , 
+#'       "Clonal", "D", 1 , 
+#'       "Clonal", "A", 1 , 
+#'       "D", "D", 1 , 
+#'       "A", "A", 1 , 
+#'       "A, D", "A, D", 1 , 
+#'       "A, C, D", "A, C, D", 1 , 
+#'       "A, B, D", "A, B, D", 1 , 
+#'       "Clonal", "Clonal", 1 
+#'   )) %>% 
+#'   finalize_generator %>% 
+#'   simulate_generator(3, 10)
+#'
+#' @export simulate_generator
+simulate_generator <- function(generator, time_ticks, times, starting_label = "Clonal", by = "labels", mode="full"){
+  m <- sparseMatrix(i = generator$graph %E>% pull(from),
+               j = generator$graph %E>% pull(to),
+               x = generator$graph %E>% pull(weight)) %>% 
+    as.matrix()
+  # quickly compute n_step matrix (O(log2(times))) matrix multiplications
+  m <- m %^% time_ticks
+  if(by == "samples"){
+    names_vec <- generator$graph %N>% pull(matching_sample)
+  }else{
+    names_vec <- generator$graph %N>% pull(label)
+  }
+  v <- m[which(names_vec == starting_label),]
+  
+  if(mode == "full"){
+    # this option easily allows to introduce FP/FN rates and missing data
+    dataset <- sample(seq(1,length(v)), times, prob = v, replace = TRUE)
+    generator$data$samples[dataset,]
+  }else if(mode == "compacted"){
+    # this option efficiently computes very large datasets
+    dataset <- sample(seq(1,length(v)), times, prob = v, replace = TRUE)
+    selected_genotypes <- dataset %>% unique()
+    count_df <- data.frame(rows = dataset) %>% count(rows)
+    sorted_count_df <- inner_join(data.frame(rows = selected_genotypes), count_df, by="rows") 
+    out_matrix <- generator$data$samples[selected_genotypes,]
+    list(matrix = out_matrix, 
+         counts = sorted_count_df %>% pull(n),
+         row_names = rownames(out_matrix))
+  }else{
+    stop("Invalid mode ", mode, " for simulate_generator")
+  }
+  
+}
 
+#' Perturbate a boolean matrix
+#'
+#' Given a boolean matrix, randomly 
+#' add False Positives (FP), False Negatives (FN) and Missing data 
+#' following user defined rates. In the final matrix, missing 
+#' data is represented by the value 3.
+#' 
+#' Note that CIMICE does not support dataset with missing data natively, 
+#' so using MIS_rate != 0 will then require some pre-processing.
+#'
+#' @param dataset a matrix/sparse matrix
+#' @param FP_rate False Positive rate
+#' @param FN_rate False Negative rate
+#' @param MIS_rate Missing Data rate
+#' 
+#' @return the new, perturbed, matrix
+#' 
+#' @examples 
+#' require(dplyr)
+#' 
+#' example_dataset() %>%
+#'   make_generator_stub() %>% 
+#'   set_generator_edges(
+#'     list(
+#'       "D", "A, D", 1 , 
+#'       "A", "A, D", 1 , 
+#'       "A, D", "A, C, D", 1 , 
+#'       "A, D", "A, B, D", 1 , 
+#'       "Clonal", "D", 1 , 
+#'       "Clonal", "A", 1 , 
+#'       "D", "D", 1 , 
+#'       "A", "A", 1 , 
+#'       "A, D", "A, D", 1 , 
+#'       "A, C, D", "A, C, D", 1 , 
+#'       "A, B, D", "A, B, D", 1 , 
+#'       "Clonal", "Clonal", 1 
+#'   )) %>% 
+#'   finalize_generator %>% 
+#'   simulate_generator(3, 10) %>% 
+#'   perturb_dataset(FP_rate = 0.01, FN_rate = 0.1, MIS_rate = 0.12)
+#'
+#' @export perturb_dataset
+perturb_dataset <- function(dataset, FP_rate = 0, FN_rate = 0, MIS_rate = 0){
+  apply(dataset, c(1,2), function(x){
+    if(rbernoulli(1, MIS_rate)){
+      3
+    }else if(x == 0){
+      if(rbernoulli(1, FP_rate)){
+        1
+      }else{
+        0
+      }
+    }else if(x == 1){
+      if(rbernoulli(1, FN_rate)){
+        0
+      }else{
+        1
+      }
+    }
+  })
+}
 

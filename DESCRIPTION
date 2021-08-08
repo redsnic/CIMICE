@@ -35,6 +35,8 @@ Imports:
     relations,
     maftools,
     assertthat,
+    tidygraph,
+    expm,
     Matrix
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
