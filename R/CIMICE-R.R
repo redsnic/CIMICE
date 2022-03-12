@@ -32,7 +32,6 @@
 #' @importFrom ggraph geom_edge_link label_rect
 #' @importFrom stats cor
 #' @importFrom utils read.csv
-#' @importFrom relations transitive_reduction endorelation
 #' @importFrom maftools read.maf mutCountMatrix
 #' @importFrom assertthat are_equal assert_that
 #' @importFrom tidygraph %E>% %N>% activate as_tbl_graph bind_edges
