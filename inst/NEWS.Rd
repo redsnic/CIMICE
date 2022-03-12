@@ -49,14 +49,11 @@
   }
 }
 
-
-\section{Changes in CIMICE-R version 1.3.1}{
+\section{Changes in CIMICE-R version 1.2.1}{
 
   \subsection{Overview:}{
       \itemize{
-        \item Removed dependency with relations 
+        \item Fixed bug with relations package
       }
   }
-
-}
-
+}  
