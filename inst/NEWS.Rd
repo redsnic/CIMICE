@@ -49,7 +49,8 @@
   }
 }
 
-\section{Changes in CIMICE-R version 1.2.1}{
+
+\section{Changes in CIMICE-R version 1.3.1}{
 
   \subsection{Overview:}{
       \itemize{
@@ -58,5 +59,4 @@
   }
 
 }
-
 
