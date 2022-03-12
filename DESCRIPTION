@@ -1,7 +1,7 @@
 Package: CIMICE
 Type: Package
 Title: CIMICE-R: (Markov) Chain Method to Inferr Cancer Evolution
-Version: 1.1.3
+Version: 1.2.1
 Authors@R: 
     c(
         person("Nicolò", "Rossi",
@@ -32,13 +32,12 @@ Imports:
     ggraph, 
     stats,
     utils,
-    relations,
     maftools,
     assertthat,
     tidygraph,
     expm,
     Matrix
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 Suggests: 
     BiocStyle,
