@@ -284,6 +284,8 @@ fix_clonal_genotype <- function(samples, freqs, labels, matching_samples){
     list("labels" = labels, "samples" = samples, "freqs"=freqs, "matching_samples"=matching_samples)
 }
 
+
+
 #' Remove transitive edges and prepare graph
 #'
 #' Create a graph from the "build_topology_subset" edge list, so
@@ -306,17 +308,71 @@ fix_clonal_genotype <- function(samples, freqs, labels, matching_samples){
 #'
 #' @export build_subset_graph
 build_subset_graph <- function(edges, labels){
+    
+    # {OLDER CODE, use if transitive reduction gets fixed}
     # prepare the actual graph
-    g = graph_from_edgelist(t(simplify2array(edges)))
+    #g <- graph_from_edgelist(t(simplify2array(edges)))
     # remove transitive edges using transitive.reduction from the "nem" package
     # g = graph_from_adjacency_matrix(transitive.reduction(as.matrix(as_adj(g))))
     # altenative approach with "relations" package
-    E <- transitive_reduction(
-        endorelation(graph = as.list(data.frame(t(as_edgelist(g))))))
-    g <- graph_from_adjacency_matrix(E$.Data$incidence)
+    #E <- transitive_reduction(
+    #    endorelation(graph = as.list(data.frame(t(as_edgelist(g))))))
+    #g <- graph_from_adjacency_matrix(E$.Data$incidence)
     # add labels to node
+    #V(g)$label <- labels
+    #g
+    g <- edges %>% remove_transitive_edges %>% graph_from_edgelist
     V(g)$label <- labels
     g
+}
+
+#' Remove transitive edges from an edgelist
+#'
+#' Remove transitive edges from an edgelist. This procedure is temporary to
+#' cover a bug in 'relations' package.
+#'
+#' @param E edge list, built from "build_topology_subset"
+#'
+#' @return a new edgelist without transitive edges (as a N*2 matrix)
+#'
+#' @examples
+#' l <- list(c(1,2),c(2,3), c(1,3))
+#' remove_transitive_edges(l)
+#'
+#' @export remove_transitive_edges
+remove_transitive_edges <- function(E){
+  
+  discarded <- rep(0, times=length(E))
+  stop <- FALSE # stop at first counterexample
+  
+  # for each edge A -> B seek a pair <A -> C, C -> B>
+  for(i in seq(1,length(E))){
+    for(e1 in E){
+      for(e2 in E){
+        if(e1[2] == e2[1] && E[[i]][1] == e1[1] && E[[i]][2] == e2[2]){
+          discarded[i] <- 1
+          stop <- TRUE
+          break
+        }
+      }
+      if(stop){
+        stop <- FALSE
+        break
+      }
+    }
+  }
+  
+  # prepare output with non discarded edges
+  out <- matrix(rep(0,times=2*length(which(discarded == 0))), ncol=2)
+  j <- 1
+  for(i in seq(1,length(E))){
+    if(discarded[i] == 0){
+      out[j,1] <- E[[i]][1]
+      out[j,2] <- E[[i]][2]
+      j <- j + 1 
+    }
+  }
+  out
 }
 
 #' Get number of children

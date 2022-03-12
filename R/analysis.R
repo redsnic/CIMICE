@@ -208,7 +208,7 @@ quick_run <- function(dataset, mode="CAPRI"){
     }else if(mode == "CAPRIpop"){
         preproc <- dataset_preprocessing_population(dataset)
     }else{
-        stop(paste("Unsupported input mode", mode, "use CAPRI o CAPRIpop"))
+        stop("Unsupported input mode", mode, "use CAPRI o CAPRIpop")
     }
     samples <- preproc[["samples"]]
     freqs   <- preproc[["freqs"]]
