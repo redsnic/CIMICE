@@ -114,7 +114,7 @@ make_labels <- function(out, mode = "samplesIDs", max_col = 3, max_row = 3){
     }else if(mode == "geneIDs"){
         labels <- out$labels %>% as.character %>% format_labels(max_col, max_row)
     }else{
-        stop(paste("Invalid output mode:", mode))
+        stop("Invalid output mode:", mode)
     }
     labels
 }
@@ -294,7 +294,7 @@ draw_visNetwork <- function(out, ...){
     
     grp <- toVisNetworkData(g, idToLabel = TRUE)
     
-    visNetwork(nodes, edges) %>% visHierarchicalLayout(sortMethod="directed")
+    visNetwork(nodes, edges) # %>% visHierarchicalLayout(sortMethod="directed")
 }
 
 
