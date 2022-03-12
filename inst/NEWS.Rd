@@ -49,4 +49,14 @@
   }
 }
 
+\section{Changes in CIMICE-R version 1.2.1}{
+
+  \subsection{Overview:}{
+      \itemize{
+        \item Removed dependency with relations 
+      }
+  }
+
+}
+
 
